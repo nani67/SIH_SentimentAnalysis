@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,16 +13,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class UserDashboard extends AppCompatActivity
         implements dashboardFragment.OnFragmentInteractionListener,
             chatbotFragment.OnFragmentInteractionListener,
             mentorConnections.OnFragmentInteractionListener,
-            remindersFragment.OnFragmentInteractionListener{
+            remindersFragment.OnFragmentInteractionListener,
+            userSettingsFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +29,6 @@ public class UserDashboard extends AppCompatActivity
         BottomAppBar bottomAppBar = findViewById(R.id.bottom_app_bar);
         setSupportActionBar(bottomAppBar);
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        ImageView profilePicHolder = findViewById(R.id.profile_image);
-        Uri profilePicFromFirebaseuser = firebaseUser.getPhotoUrl();
-        TextView userEmailIDStuff = findViewById(R.id.user_email);
-
-        TextView userNameStuff= findViewById(R.id.user_name);
-
-        userEmailIDStuff.setText(firebaseUser.getEmail());
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-
-
-        if(profilePicFromFirebaseuser != null) {
-            profilePicHolder.setImageURI(profilePicFromFirebaseuser);
-        } else {
-            //Do Nothing
-        }
 
         bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -90,6 +69,16 @@ public class UserDashboard extends AppCompatActivity
                         fragmentTransaction4.addToBackStack(null);
                         fragmentTransaction4.commit();
                         break;
+
+                    case R.id.userSettings:
+
+                        FragmentManager fragmentManager5 = getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction5 = fragmentManager5.beginTransaction();
+                        fragmentTransaction5.replace(R.id.fragment_userDashboard, new userSettingsFragment());
+                        fragmentTransaction5.addToBackStack(null);
+                        fragmentTransaction5.commit();
+                        break;
+
                 }
                 return false;
             }
@@ -108,16 +97,6 @@ public class UserDashboard extends AppCompatActivity
             public void onClick(View view) {
                 BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance();
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
-
-            }
-        });
-
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
 
             }
         });
