@@ -1,15 +1,14 @@
 package com.example.stressbuster;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,7 +19,6 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -84,8 +82,6 @@ public class LoginRegisterActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
-
-                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                     startActivity(new Intent(LoginRegisterActivity.this, FirstTimeInitialization.class));
 
 
@@ -99,9 +95,6 @@ public class LoginRegisterActivity extends AppCompatActivity {
 
 
 
-            final String nameOfTheuser = nameOfTheUser.getText().toString();
-            final String collegeName = collName.getText().toString();
-            final String CollRollNo = collRollNo.getText().toString();
 
             MaterialButton materialButton = findViewById(R.id.registerUser);
             materialButton.setOnClickListener(new View.OnClickListener() {
@@ -120,23 +113,30 @@ public class LoginRegisterActivity extends AppCompatActivity {
                                         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                                         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
                                         Map<String, String> userInfo = new HashMap<>();
+
+
+                                        String nameOfTheuser = nameOfTheUser.getText().toString();
+                                        String collegeName = collName.getText().toString();
+                                        String CollRollNo = collRollNo.getText().toString();
+
                                         userInfo.put("userName", nameOfTheuser);
                                         userInfo.put("collegeName", collegeName);
                                         userInfo.put("rollNumber", CollRollNo);
 
-                                        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
-                                                .add(userInfo)
-                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo").document("sampleDoesTheThing")
+                                                .set(userInfo)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
-                                                    public void onSuccess(DocumentReference documentReference) {
-
-                                                        Toast.makeText(getApplicationContext(), "Account created successfully, Logging you in...", Toast.LENGTH_LONG);
-
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()) {
+                                                            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG).show();
+                                                        }
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
+                                                        Log.d("Exception", e.toString());
 
                                                     }
                                                 });

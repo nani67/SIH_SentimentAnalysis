@@ -4,11 +4,23 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +87,29 @@ public class dashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+        final TextView welcomeUser = view.findViewById(R.id.dashboard_welcomingUser);
+        Source source = Source.DEFAULT;
+        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
+                .document("sampleDoesTheThing")
+                .get(source)
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            String apple = task.getResult().get("userName").toString();
+                            welcomeUser.setText("Hey "+apple+"!");
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Exception", e.toString());
+            }
+        });
 
         LineChartView lineChartData = view.findViewById(R.id.chart);
         lineChartData.setInteractive(true);
