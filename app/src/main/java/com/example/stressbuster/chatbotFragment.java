@@ -2,44 +2,29 @@ package com.example.stressbuster;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.JsonElement;
 
-import java.util.Map;
-
+import ai.api.AIDataService;
 import ai.api.AIListener;
+import ai.api.AIServiceException;
 import ai.api.android.AIConfiguration;
 import ai.api.android.AIService;
 import ai.api.model.AIError;
+import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link chatbotFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link chatbotFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class chatbotFragment extends Fragment implements AIListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -47,16 +32,7 @@ public class chatbotFragment extends Fragment implements AIListener {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment chatbotFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static chatbotFragment newInstance(String param1, String param2) {
+    public static chatbotFragment newInstance() {
         return new chatbotFragment();
     }
 
@@ -64,14 +40,20 @@ public class chatbotFragment extends Fragment implements AIListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final AIConfiguration config = new AIConfiguration("455266f837af473cabc960a694f26970",
+        final AIConfiguration config = new AIConfiguration("68fd4b7aa23f4c07b9270246d9dc1e0d",
                 AIConfiguration.SupportedLanguages.English,
                 AIConfiguration.RecognitionEngine.System);
+
         aiService = AIService.getService(getContext(), config);
+        aiDataService = new AIDataService(config);
+        aiRequest = new AIRequest();
+
         aiService.setListener(this);
 
     }
     private AIService aiService;
+    private AIDataService aiDataService;
+    private AIRequest aiRequest;
 
 
     @Override
@@ -79,7 +61,7 @@ public class chatbotFragment extends Fragment implements AIListener {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_chatbot, container, false);
-        FloatingActionButton aiButton = view.findViewById(R.id.sendMessageToChatbot);
+        final FloatingActionButton aiButton = view.findViewById(R.id.sendMessageToChatbot);
 
         aiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +69,42 @@ public class chatbotFragment extends Fragment implements AIListener {
                 aiService.startListening();
             }
         });
+
+        FloatingActionButton sendTextMsg = view.findViewById(R.id.sendTextMessageToChatbot);
+
+        final EditText editText = view.findViewById(R.id.editTextForChatbot);
+
+        sendTextMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = editText.getText().toString();
+                aiRequest.setQuery(query);
+
+                new AsyncTask<AIRequest, Void, AIResponse>() {
+
+                    @Override
+                    protected AIResponse doInBackground(AIRequest... requests) {
+                        final AIRequest request = requests[0];
+                        try {
+                            final AIResponse response = aiDataService.request(aiRequest);
+                            return response;
+                        } catch (AIServiceException e) {
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void onPostExecute(AIResponse aiResponse) {
+                        if (aiResponse != null) {
+                            final String responseQuery = aiResponse.getResult().getFulfillment().getSpeech();
+                            Log.d("Resolved Query", responseQuery);
+                        }
+                    }
+
+                }.execute(aiRequest);
+
+            }
+        });
+
         return view;
 
     }
@@ -118,17 +136,7 @@ public class chatbotFragment extends Fragment implements AIListener {
     @Override
     public void onResult(AIResponse result) {
         Result resultForDisplay = result.getResult();
-
-        String parameterString = "";
-        if (resultForDisplay.getParameters() != null && !resultForDisplay.getParameters().isEmpty()) {
-            for (final Map.Entry<String, JsonElement> entry : resultForDisplay.getParameters().entrySet()) {
-                parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
-            }
-        }
-
-        Log.d("Query:" , resultForDisplay.getResolvedQuery() +
-                "\nAction: " + resultForDisplay.getAction() +
-                "\nParameters: " + parameterString);
+        Log.d("Query using Speech" , resultForDisplay.getFulfillment().getSpeech());
 
     }
 
