@@ -3,70 +3,92 @@ package com.example.stressbuster;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link mentorConnections.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link mentorConnections#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+
 public class mentorConnections extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     public mentorConnections() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment mentorConnections.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static mentorConnections newInstance(String param1, String param2) {
-        mentorConnections fragment = new mentorConnections();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static mentorConnections newInstance() {
+        return new mentorConnections();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mentor_connections, container, false);
+        View view = inflater.inflate(R.layout.fragment_mentor_connections, container, false);
+
+        final RecyclerView recyclerView = view.findViewById(R.id.recyclerViewForCounsellingHistory);
+
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("counsellingHistory")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        List<DocumentSnapshot> list = Objects.requireNonNull(queryDocumentSnapshots).getDocuments();
+                        List<MyListDataForCounselling> myListDataForCounsellings = new ArrayList<>();
+                        for(DocumentSnapshot documentSnapshot: list) {
+
+                            myListDataForCounsellings.add(new MyListDataForCounselling(documentSnapshot.get("typeOfCounselling").toString(),
+                                    documentSnapshot.get("counsellorName").toString(),
+                                    documentSnapshot.get("dateOfCounselling").toString(),
+                                    documentSnapshot.get("durationOfCounselling").toString(),
+                                    Integer.parseInt(documentSnapshot.get("ratingsForSession").toString())));
+
+
+                        }
+
+
+                        MyListAdapterForCounselling adapter = new MyListAdapterForCounselling(myListDataForCounsellings);
+
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(adapter);
+
+
+                    }
+                });
+
+
+
+
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

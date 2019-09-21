@@ -25,6 +25,7 @@ public class UserDashboard extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_dashboard);
+        setStatusBarGradientOk.setStatusBarGradient(this);
 
         BottomAppBar bottomAppBar = findViewById(R.id.bottom_app_bar);
         setSupportActionBar(bottomAppBar);
