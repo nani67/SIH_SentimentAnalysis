@@ -115,6 +115,15 @@ class DrowsinessDetector:
             cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
+'''
+hogFaceDetector = dlib.get_frontal_face_detector()
+faceRects = hogFaceDetector(frameDlibHogSmall, 0)
+for faceRect in faceRects:
+    x1 = faceRect.left()
+    y1 = faceRect.top()
+    x2 = faceRect.right()
+    y2 = faceRect.bottom()
+'''
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -187,6 +196,11 @@ while True:
     # faces in the input image
     detector.setInput(imageBlob)
     detections = detector.forward();
+
+    #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # detect faces in the grayscale frame
+    #rects = drowsiness_detector(gray, 0)
+    #faceRects = hogFaceDetector(rects, 0)
 
     t = Thread(target=drowsinessDetector.detect_drowsy(frame))
     t.deamon = True
