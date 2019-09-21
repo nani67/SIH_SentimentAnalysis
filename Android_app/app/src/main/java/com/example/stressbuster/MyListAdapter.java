@@ -1,6 +1,7 @@
 package com.example.stressbuster;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,19 +9,21 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.List;
+import java.util.Map;
 
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder>{
-    private List<MyListData> listdata;
+    private Map<String, String> listdata;
+
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    public MyListAdapter(List<MyListData> listdata) {
+    public MyListAdapter(Map<String, String> listdata) {
         this.listdata = listdata;
     }
     @Override
@@ -33,24 +36,31 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.textView.setText(listdata.get(position).getDescription());
-        holder.deleteStuff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//
-//                firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("reminders")
-//                        .document("Reminder" + (listdata.size()))
-//                        .delete()
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d("Delete successful", (listdata.size() - position)+"");
-//                            }
-//                        });
+        Object[] values = listdata.values().toArray();
+        final Object[] firebaseReferences = listdata.keySet().toArray();
+        Log.d("Length", values.length+"");
+            holder.textView.setText(values[position].toString());
+            Log.d("Adapter fu", values[position].toString());
+            holder.deleteStuff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-            }
-        });
+                    firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("reminders")
+                            .document(firebaseReferences[position].toString())
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+
+                                }
+                            });
+                }
+            });
+
+
     }
+
+
 
 
     @Override

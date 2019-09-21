@@ -13,23 +13,10 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="128dp"
-        android:padding="8dp"
-        android:textColor="#FFFFFF"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:textColor="#000000"
         android:textSize="16sp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/delStuffRem"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#F44336"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/name"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="X"
-        android:layout_margin="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:text="What's coming up..!" />
 
-                <ListView
+                <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -131,6 +131,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/smile_rating"
+                    android:id="@+id/yep_itsdone"
                     android:text="Yep! It's done!"
                     android:padding="8dp"
                     android:textAllCaps="false"
@@ -178,6 +179,13 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/stressGraphInDashboard"
                     android:layout_height="150dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last 7 days data"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chart" />
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="wrap_content"

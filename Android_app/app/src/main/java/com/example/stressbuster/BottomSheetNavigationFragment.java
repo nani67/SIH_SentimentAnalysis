@@ -3,14 +3,16 @@ package com.example.stressbuster;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,6 +74,12 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         //Get the content View
         final View contentView = View.inflate(getContext(), R.layout.bottom_nav_drawer, null);
 
+        final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPref.edit();
+
+
+
+
         NavigationView navigationView = contentView.findViewById(R.id.navigation_view);
         final TextView userName = contentView.findViewById(R.id.user_name);
         final TextView userEmail = contentView.findViewById(R.id.user_email);
@@ -92,7 +100,7 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
         userEmail.setText(firebaseUser.getEmail());
 
-        Source source = Source.CACHE;
+        Source source = Source.DEFAULT;
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
                 .document("sampleDoesTheThing")
                 .get(source)
@@ -121,59 +129,78 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                 switch (item.getItemId()) {
                     case R.id.nav01:
 
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext())
-                                .setTitle("Facebook Credentials")
-                                .setMessage("Here are your details of Facebook Profile.")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                        LayoutInflater layoutInflater = alertDialog.getLayoutInflater();
+                        final View view = layoutInflater.inflate(R.layout.get_social_media_info_bottomappbar, null);
+                        alertDialog.setTitle("Facebook Credentials");
+                        alertDialog.setCancelable(true);
 
-                                    }
-                                })
-                                .setNeutralButton("Update", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final EditText userNameOfFacebookInfo = view.findViewById(R.id.editTextForUserName);
+                        final EditText passwordForFacebookInfo = view.findViewById(R.id.passwordEditTextForDialog);
 
-                                    }
-                                });
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                alertDialog.dismiss();
+                            }
+                        });
 
 
-                        final FrameLayout frameView = new FrameLayout(getContext());
-                        alertDialog.setView(frameView);
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                        final AlertDialog alertDialog2 = alertDialog.create();
-                        LayoutInflater inflater = alertDialog2.getLayoutInflater();
-                        View dialoglayout = inflater.inflate(R.layout.get_social_media_info_bottomappbar, frameView);
-                        alertDialog2.show();
+                                        editor.putString("FacebookUserID", userNameOfFacebookInfo.getText().toString());
+                                        editor.putString("FacebookUserPassword", passwordForFacebookInfo.getText().toString());
+                                        editor.apply();
+
+
+                            }
+                        });
+
+
+                        alertDialog.setView(view);
+                        alertDialog.show();
+
+
 
                         break;
                     case R.id.nav02:
 
 
-                        AlertDialog.Builder alertDialog3 = new AlertDialog.Builder(getContext())
-                                .setTitle("Instagram Credentials")
-                                .setMessage("Here are your details of Instagram Profile.")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final AlertDialog alertDialog2 = new AlertDialog.Builder(getContext()).create();
+                        LayoutInflater layoutInflater2 = alertDialog2.getLayoutInflater();
+                        final View view2 = layoutInflater2.inflate(R.layout.get_social_media_info_bottomappbar, null);
+                        alertDialog2.setTitle("Instagram Credentials");
+                        alertDialog2.setCancelable(true);
 
-                                    }
-                                })
-                                .setNeutralButton("Update", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final EditText userNameOfInstagramInfo = view2.findViewById(R.id.editTextForUserName);
+                        final EditText passwordForInstagramInfo = view2.findViewById(R.id.passwordEditTextForDialog);
 
-                                    }
-                                });
+                        alertDialog2.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                alertDialog2.dismiss();
+                            }
+                        });
 
 
-                        final FrameLayout frameView2 = new FrameLayout(getContext());
-                        alertDialog3.setView(frameView2);
+                        alertDialog2.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                        final AlertDialog alertDialog4 = alertDialog3.create();
-                        LayoutInflater inflater2 = alertDialog4.getLayoutInflater();
-                        View dialoglayout2 = inflater2.inflate(R.layout.get_social_media_info_bottomappbar, frameView2);
-                        alertDialog3.show();
+                                editor.putString("InstagramUserID", userNameOfInstagramInfo.getText().toString());
+                                editor.putString("InstagramUserPassword", passwordForInstagramInfo.getText().toString());
+                                editor.apply();
+
+
+                            }
+                        });
+
+                        alertDialog2.setView(view2);
+                        alertDialog2.show();
 
                         break;
                 }

@@ -10,28 +10,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class remindersFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
@@ -59,27 +58,29 @@ public class remindersFragment extends Fragment {
         final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-        final List<MyListData> myListDataList = new ArrayList<>();
-
-
         final RecyclerView recyclerView = view.findViewById(R.id.recyclerViewForReminders);
-        final MyListAdapter adapter = new MyListAdapter(myListDataList);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("reminders")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        myListDataList.clear();
-                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                        for(DocumentSnapshot documentSnapshot: list) {
-                            myListDataList.add(new MyListData(documentSnapshot.get("Reminder").toString()));
-                        }
-                        recyclerView.setAdapter(adapter);
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    Map<String, String> myListDataList = new HashMap<>();
+
+                    List<DocumentSnapshot> list = Objects.requireNonNull(queryDocumentSnapshots).getDocuments();
+                    for(DocumentSnapshot documentSnapshot: list) {
+                        myListDataList.put(documentSnapshot.getId(), documentSnapshot.get("reminder").toString());
+                        Log.d("Document IDs", documentSnapshot.getId());
+
                     }
-                });
+
+                    MyListAdapter adapter = new MyListAdapter(myListDataList);
+
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(adapter);
+
+                }
+            });
 
 
         MaterialButton materialButton = view.findViewById(R.id.BtnForAddingReminders);
@@ -100,35 +101,26 @@ public class remindersFragment extends Fragment {
                                 String text = editText.getText().toString();
 
                                 HashMap<String, String> a = new HashMap<>();
-                                a.put("Reminder", text);
+                                a.put("reminder", text);
 
                                 firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("reminders")
-                                        .document("Reminder"+myListDataList.size() + "")
-                                        .set(a)
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d("Exception", e.toString());
-                                            }
-                                        })
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getContext(), "Reminder added", Toast.LENGTH_LONG).show();
+                                        .add(a)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
 
-                                            }
-                                        });
+                                    }
+                                });
 
                             }
                         })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
                             }
                         })
-                .show()
-                ;
+                .show();
 
 
 

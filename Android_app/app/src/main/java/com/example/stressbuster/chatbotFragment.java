@@ -1,6 +1,7 @@
 package com.example.stressbuster;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
@@ -51,9 +55,14 @@ public class chatbotFragment extends Fragment implements AIListener {
         aiService.setListener(this);
 
     }
+
     private AIService aiService;
     private AIDataService aiDataService;
     private AIRequest aiRequest;
+
+
+    LinearLayout layout;
+    ScrollView scrollView;
 
 
     @Override
@@ -62,6 +71,8 @@ public class chatbotFragment extends Fragment implements AIListener {
 
         View view = inflater.inflate(R.layout.fragment_chatbot, container, false);
         final FloatingActionButton aiButton = view.findViewById(R.id.sendMessageToChatbot);
+        scrollView = view.findViewById(R.id.scrollView);
+        layout = view.findViewById(R.id.chatbotForChatbotFragment);
 
         aiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +89,9 @@ public class chatbotFragment extends Fragment implements AIListener {
             @Override
             public void onClick(View view) {
                 String query = editText.getText().toString();
+
+                addMessageBox("You\n" + query, 1);
+
                 aiRequest.setQuery(query);
 
                 new AsyncTask<AIRequest, Void, AIResponse>() {
@@ -96,6 +110,7 @@ public class chatbotFragment extends Fragment implements AIListener {
                     protected void onPostExecute(AIResponse aiResponse) {
                         if (aiResponse != null) {
                             final String responseQuery = aiResponse.getResult().getFulfillment().getSpeech();
+                            addMessageBox("Bot" + "\n" + responseQuery, 2);
                             Log.d("Resolved Query", responseQuery);
                         }
                     }
@@ -136,9 +151,58 @@ public class chatbotFragment extends Fragment implements AIListener {
     @Override
     public void onResult(AIResponse result) {
         Result resultForDisplay = result.getResult();
+        String queryOnes = resultForDisplay.getResolvedQuery();
+        addMessageBox("You\n" + queryOnes, 1);
+
+        addMessageBox("Bot" + "\n" + resultForDisplay.getFulfillment().getSpeech(), 2);
         Log.d("Query using Speech" , resultForDisplay.getFulfillment().getSpeech());
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void addMessageBox(String message, int type) {
+        TextView textView = new TextView(getContext());
+        textView.setText(message);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, 10);
+        textView.setLayoutParams(lp);
+
+        if (type == 1) {
+            textView.setBackgroundResource(R.drawable.rounded_corner1);
+            textView.setTextColor(Color.parseColor("#000000"));
+            textView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            textView.setTextSize(16);
+        } else {
+            textView.setBackgroundResource(R.drawable.rounded_corner2);
+            textView.setTextColor(Color.parseColor("#000000"));
+            textView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            textView.setTextSize(16);
+        }
+
+        layout.addView(textView);
+        scrollView.fullScroll(View.FOCUS_DOWN);
+    }
+
+
+
+
+
+
 
     @Override
     public void onError(AIError error) {
@@ -163,18 +227,10 @@ public class chatbotFragment extends Fragment implements AIListener {
     @Override
     public void onListeningFinished() {
 
+
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
