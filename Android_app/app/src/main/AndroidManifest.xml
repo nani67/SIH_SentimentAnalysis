@@ -27,6 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity android:name="com.chaquo.python.android.PyApplication" />
+        
+        
         <service
             android:name=".DataScraper"
             android:enabled="true"
