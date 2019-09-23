@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,10 +13,13 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +36,23 @@ public class MainActivity extends AppCompatActivity {
         setStatusBarGradientOk.setStatusBarGradient(this);
 
         createNotificationChannel();
+
+
+        final SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+
+
+
+        if(!Python.isStarted()) {
+            Python.start(new AndroidPlatform(getApplicationContext()));
+
+            if(sharedPref.getString("InstagramuserID", "") == "" || sharedPref.getString("InstagramUserPassword", "") == "") {
+                Toast.makeText(this, "No Instagram credentials added. Please add to comtinue", Toast.LENGTH_LONG).show();
+            } else {
+                InstagramScraperStuff instagramScraperStuff = new InstagramScraperStuff(sharedPref.getString("InstagramUserID",""), sharedPref.getString("InstagramUserPassword",""));
+                instagramScraperStuff.getStuffDone();
+            }
+
+        }
 
         Intent intent = new Intent(this, DataScraper.class);
         startService(intent);
