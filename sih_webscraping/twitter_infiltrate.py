@@ -1,8 +1,8 @@
-import twitter
+import twitter, json
 
 class TwitterTarget(object):
 
-    def __init__(self):
+    def __init__(self, your_username):
         self.consumer_API_key = "8mo1oe5PCYxRzXytj8lK9beaM"
         self.consumer_secret_API_key = "E7l6T7MYBCn05YGLA05tfVz9NKIfBNKJR79JjxALntnr6je113"
         self.access_token = "805220750042857472-n3zPdbfnjMLn1QpWV7igz42vG7Eqrvz"
@@ -11,10 +11,23 @@ class TwitterTarget(object):
                                consumer_secret=self.consumer_secret_API_key,
                                access_token_key=self.access_token,
                                access_token_secret=self.secret_access_token)
+        self.target_username = your_username
+        self.user = self.api.GetUser(screen_name=self.target_username)
+        self.id = self.user.id
+        self.name = self.user.name
         self.username = None
         self.search_result = {}
         self.target_user_result = None
         self.results = {}
+
+    def get_own_id(self):
+        return self.id
+
+    def get_own_username(self):
+        return self.target_username
+
+    def get_own_name(self):
+        return self.name
 
     def search_by_parameter(self, parameter):
         results = self.api.GetUsersSearch(term=parameter)
@@ -58,11 +71,12 @@ class TwitterTarget(object):
 
             if name not in list(self.results.keys()):
                 self.results[name] = []
-            self.results[name].append({"id": id,
-                                       "body": text,
-                                       "time": time,
-                                       "hashtags": hashtags,
-                                       "media": media})
+                result = {"id": id,
+                          "body": text,
+                          "time": time,
+                          "hashtags": hashtags,
+                          "media": media}
+            self.results[name].append(result)
 
     def get_results(self):
         return self.results
@@ -70,7 +84,9 @@ class TwitterTarget(object):
     def get_tweeters(self):
         return list(self.results.keys())
 
-test = TwitterTarget()
+
+test = TwitterTarget('ChaotiqueEdge')
+# print(test)
 
 ###############################################################################################################
 # Use search_by_parameters to obtain 20 usernames. Only the same 20 will always be obtained.                  #
@@ -83,8 +99,8 @@ test = TwitterTarget()
 # Refer below for an example. It may be helpful to use the get_tweeters() method to see who made posts in that page. #
 # Use get_results() method to get direct access to the results. It is a dictionary.                                  #
 ######################################################################################################################
-# test.set_target_by_username("BeyondBrokenDep")
-# print(test.get_results())
+test.set_target_by_username("BeyondBrokenDep")
+print(test.get_tweeters())
 
 
 
