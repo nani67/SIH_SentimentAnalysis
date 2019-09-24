@@ -44,9 +44,7 @@ if __name__ == '__main__':
     logger = logging.getLogger('instagram_private_api')
     logger.setLevel(logging.WARNING)
 
-    username = "jajabixoxo"
-    password = "pDVz3#!5W5qD0PLJ5SbM"
-    sername = "ENTER USER"
+    username = "ENTER USER"
     password = "ENTER PASSWORD"
     settings_file_path = 'test_credentials.json' #Leave it as usual. This thing stores info of the cookies for future use
 
