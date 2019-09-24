@@ -4,13 +4,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class DataScraper extends Service {
     public DataScraper() {
@@ -25,9 +21,6 @@ public class DataScraper extends Service {
     public void onCreate() {
 
         super.onCreate();
-
-        Date currentTime = Calendar.getInstance().getTime();
-        Log.d("DateTime", currentTime.toString());
 
         Intent intent = new Intent(this, UserDashboard.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
+
+import java.util.Objects;
 
 public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
@@ -74,10 +75,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         //Get the content View
         final View contentView = View.inflate(getContext(), R.layout.bottom_nav_drawer, null);
 
-        final SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final SharedPreferences sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPref.edit();
-
-
 
 
         NavigationView navigationView = contentView.findViewById(R.id.navigation_view);
@@ -87,16 +86,6 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-
-        ImageView profilePicHolder = contentView.findViewById(R.id.profile_image);
-        Uri profilePicFromFirebaseuser = firebaseUser.getPhotoUrl();
-
-        if(profilePicFromFirebaseuser != null) {
-            profilePicHolder.setImageURI(profilePicFromFirebaseuser);
-        } else {
-            //Do Nothing
-        }
 
         userEmail.setText(firebaseUser.getEmail());
 
@@ -138,10 +127,12 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                         final EditText userNameOfFacebookInfo = view.findViewById(R.id.editTextForUserName);
                         final EditText passwordForFacebookInfo = view.findViewById(R.id.passwordEditTextForDialog);
 
+                        userNameOfFacebookInfo.setHint(sharedPref.getString("FacebookUserID",""));
+                        passwordForFacebookInfo.setHint(sharedPref.getString("FacebookUserPassword",""));
+
                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 alertDialog.dismiss();
                             }
                         });
@@ -178,6 +169,9 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                         final EditText userNameOfInstagramInfo = view2.findViewById(R.id.editTextForUserName);
                         final EditText passwordForInstagramInfo = view2.findViewById(R.id.passwordEditTextForDialog);
 
+                        userNameOfInstagramInfo.setHint(sharedPref.getString("InstagramUserID",""));
+                        passwordForInstagramInfo.setHint(sharedPref.getString("InstagramUserPassword",""));
+
                         alertDialog2.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -203,6 +197,25 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                         alertDialog2.show();
 
                         break;
+
+
+
+
+                    case R.id.user_privacyPolicy:
+
+                        final AlertDialog alertDialog3 = new AlertDialog.Builder(getContext()).create();
+                        LayoutInflater layoutInflater3 = alertDialog3.getLayoutInflater();
+                        final View view3 = layoutInflater3.inflate(R.layout.user_privacy_policy, null);
+                        alertDialog3.setCancelable(true);
+                        alertDialog3.setView(view3);
+                        alertDialog3.setTitle("Privacy Policy");
+                        alertDialog3.setButton(DialogInterface.BUTTON_POSITIVE, "Looks Nice!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dismiss();
+                            }
+                        });
+                        alertDialog3.show();
                 }
                 return false;
             }

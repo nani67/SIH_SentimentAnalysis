@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Stress Buster</string>
+    <string name="app_name">Blue Flag</string>
     <string name="internet_connectivity_not_found">Internet connectivity not found!</string>
     <string name="title_activity_user_dashboard">UserDashboard</string>
     <string name="title_home">Home</string>
@@ -12,6 +12,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="permissions_needed">Microphone permission is needed for using Speech in the chatbot.</string>
+    <string name="first_time_init_doneBtn">Done</string>
+    <string name="getusedtoit">Explore the app, find out stuff and get used to it</string>
+    <string name="permission_granted">Permission granted</string>
+
     <string name="menu_home">Dashboard</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
@@ -19,6 +24,113 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="privacypolicy">
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+        Shows up privacy policy of our app.
+    </string>
+
+
 </resources>

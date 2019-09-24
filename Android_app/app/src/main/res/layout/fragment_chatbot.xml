@@ -19,7 +19,7 @@
         android:layout_margin="16dp"
         android:textSize="24sp"
         android:textColor="#FFFFFF"
-        android:text="Chatty Here!" />
+        android:text="Blue Flag Assistant" />
 
 
     <ScrollView
