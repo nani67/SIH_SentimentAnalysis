@@ -3,13 +3,12 @@ from scipy.spatial import distance as dist
 import cv2
 
 class DrowsinessDetector:
-    def __init__(self, EYE_AR_THRESH, EYE_AR_CONSEC_FRAMES, ALARM_ON, detector, predictor):
+    def __init__(self, EYE_AR_THRESH, EYE_AR_CONSEC_FRAMES, detector, predictor):
         self.EYE_AR_THRESH = EYE_AR_THRESH
         self.EYE_AR_CONSEC_FRAMES = EYE_AR_CONSEC_FRAMES
         # initialize the frame counter as well as a boolean used to
         # indicate if the alarm is going off
         self.COUNTER = 0
-        self.ALARM_ON = ALARM_ON
 
         self.detector = detector
         self.predictor = predictor
@@ -18,9 +17,6 @@ class DrowsinessDetector:
         (self.lStart, self.lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
         (self.rStart, self.rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
 
-    def sound_alarm(self, path):
-        #play an alarm sound
-        playsound.playsound(path)
 
     def eye_aspect_ratio(self, eye):
         # compute the euclidean distances between the two sets of
@@ -71,11 +67,6 @@ class DrowsinessDetector:
             # if the eyes were closed for a sufficient number of
             # then sound the alarm
             if person.counter >= self.EYE_AR_CONSEC_FRAMES:
-                # if the alarm is not on, turn it on
-                if not self.ALARM_ON:
-                    self.ALARM_ON = True
-
-                # draw an alarm on the frame
                 cv2.putText(frame, person.name + " DROWSINESS ALERT!", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
@@ -84,7 +75,6 @@ class DrowsinessDetector:
         # threshold, so reset the counter and alarm
         else:
             person.counter = 0
-            self.ALARM_ON = False
 
         # draw the computed eye aspect ratio on the frame to help
         # with debugging and setting the correct eye aspect ratio
@@ -98,6 +88,13 @@ class Person:
         self.counter = 0
         self.name = name
         self.fatigue_counter = 0
+        self.number_predicts = 0
 
     def inc_drowsiness(self):
         self.fatigue_counter += 1
+
+    def add_prob(self, prob):
+        self.proba_list.append(prob)
+
+    def incr_numpred(self):
+        self.number_predicts += 1
