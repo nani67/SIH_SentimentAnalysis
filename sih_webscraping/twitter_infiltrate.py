@@ -18,7 +18,7 @@ class TwitterTarget(object):
         self.username = None
         self.search_result = {}
         self.target_user_result = None
-        self.results = {}
+        self.results = []
 
     def get_own_id(self):
         return self.id
@@ -43,6 +43,7 @@ class TwitterTarget(object):
                                                            count=200)
 
         for status in self.target_user_result:
+            # print(status)
             id = status.id
             name = status.user.screen_name
             time = status.created_at
@@ -69,30 +70,34 @@ class TwitterTarget(object):
                         count = count + 1
                         continue
 
-            if name not in list(self.results.keys()):
-                self.results[name] = []
-                result = {"id": id,
-                          "body": text,
-                          "time": time,
-                          "hashtags": hashtags,
-                          "media": media}
-            self.results[name].append(result)
+            result = {"name": name,
+                      "id": id,
+                      "text": text,
+                      "time": time,
+                      "hashtags": hashtags,
+                      "media": media}
+
+            self.results.append(result)
 
     def get_results(self):
         return self.results
+
+    def get_own_feed(self):
+        self.set_target_by_username(self.get_own_username())
+        return self.get_results()
 
     def get_tweeters(self):
         return list(self.results.keys())
 
 
 test = TwitterTarget('ChaotiqueEdge')
-# print(test)
 
 ###############################################################################################################
 # Use search_by_parameters to obtain 20 usernames. Only the same 20 will always be obtained.                  #
 # For example, if I intend to look for depression, use test.search_by_parameter('depression') as shown below. #
 ###############################################################################################################
 # search_depression = test.search_by_parameter('depression')
+# print(search_depression)
 
 ######################################################################################################################
 # Use set_target_by_username to obtain the last 200 posts of that username.                                          #
@@ -100,8 +105,13 @@ test = TwitterTarget('ChaotiqueEdge')
 # Use get_results() method to get direct access to the results. It is a dictionary.                                  #
 ######################################################################################################################
 test.set_target_by_username("BeyondBrokenDep")
-print(test.get_tweeters())
+print(test.get_results())
 
-
+# Do this:
+# 1) search_by_parameters for mental illnesses
+# 2) set_target_by_username for each username obtained by 1)
+# 3) get the results and place it in a list
+# 4) write to a .txt or .csv file
+# 5) use set_target_by_username(your_own_username) to get your own feed.
 
 

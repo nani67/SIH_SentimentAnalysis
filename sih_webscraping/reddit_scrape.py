@@ -10,28 +10,30 @@ class RedditTarget(object):
                                   client_secret=self.secret,
                                   user_agent=self.user_agent)
 
-    def search_subreddit(self, term, params='all'):
-        if params == 'all':
-            return self.reddit.subreddit(term).top(params)
-        else:
-            return self.reddit.subreddit(term).top(limit=params)
+    def search_subreddit(self, term, params=50):
+        return self.reddit.subreddit(term).top(limit=params)
 
-    def get_posts_info(self, term, qty):
-        result = {}
-        search_result = self.search_subreddit(term, qty)
+    def get_posts_info(self, term):
+        results = []
+        search_result = self.search_subreddit(term)
         for term in search_result:
-            if term.author not in list(result.keys()):
-                result[term.author] = []
 
-            result[term.author] = {'id': term.id,
-                                   'title': term.title,
-                                   'text': term.selftext,
-                                   'comments': term.comments.list(),
-                                   'url': term.url}
+            author = 'anonymous'
+            title = term.title
+            text = term.selftext
+            comments = term.comments.list()
+
+            if term.author is not None:
+                author = term.author.name
+
+            result = {'author': author,
+                      'title': title,
+                      'text': text,
+                      'comments': comments}
+            results.append(result)
+
         return result
 
-    def get_own_feed(self):
-        pass
-
-test = RedditTarget()
-test.get_posts_info('anxiety')
+# just use get_posts_info for each illness.
+# test = RedditTarget()
+# test.get_posts_info('depression')
