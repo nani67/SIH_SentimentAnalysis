@@ -5,7 +5,7 @@ import reddit_scrape
 mental_illnesses = ['depression', 'anxiety', 'stress', 'suicide', 'bipolar disorder']
 
 # need to take relevant values off a person's account
-instagram_handle = instagram_infiltrate.InstagramScrape('k_gymnopedie', 'magnataur')
+instagram_handle = instagram_infiltrate.InstagramScrape('xxxxxxxxxxxx', 'xxxxxxxxxxxxx')
 twitter_handle = twitter_infiltrate.TwitterTarget('ChaotiqueEdge')
 reddit_handle = reddit_scrape.RedditTarget()
 
