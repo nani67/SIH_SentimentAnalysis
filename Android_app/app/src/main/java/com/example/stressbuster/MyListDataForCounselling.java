@@ -5,13 +5,15 @@ public class MyListDataForCounselling {
     private String counsellorName;
     private String dateOfCounselling;
     private String durationOfCounselling;
+    private String isItDone;
     private int ratingValue;
 
-    public MyListDataForCounselling(String typeOfCounselling, String counsellorName, String dateOfCounselling, String durationOfCounselling, int ratingValue) {
+    public MyListDataForCounselling(String typeOfCounselling, String counsellorName, String isItDone, String dateOfCounselling, String durationOfCounselling, int ratingValue) {
         this.counsellorName =counsellorName;
         this.dateOfCounselling = dateOfCounselling;
         this.durationOfCounselling = durationOfCounselling;
         this.typeOfCounselling = typeOfCounselling;
+        this.isItDone = isItDone;
         this.ratingValue = ratingValue;
     }
 
@@ -33,5 +35,9 @@ public class MyListDataForCounselling {
 
     public String getTypeOfCounselling() {
         return typeOfCounselling;
+    }
+
+    public String getIsItDone() {
+        return isItDone;
     }
 }

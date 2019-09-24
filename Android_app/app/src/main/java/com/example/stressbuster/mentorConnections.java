@@ -46,13 +46,11 @@ public class mentorConnections extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mentor_connections, container, false);
 
-        final RecyclerView recyclerView = view.findViewById(R.id.recyclerViewForCounsellingHistory);
-
+        final RecyclerView recyclerViewPrevious = view.findViewById(R.id.recyclerViewForCounsellingHistory);
+        final RecyclerView recyclerViewupcoming = view.findViewById(R.id.recyclerViewForUpcomingCounselling);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-
 
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("counsellingHistory")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -65,20 +63,31 @@ public class mentorConnections extends Fragment {
 
                             myListDataForCounsellings.add(new MyListDataForCounselling(documentSnapshot.get("typeOfCounselling").toString(),
                                     documentSnapshot.get("counsellorName").toString(),
+                                    documentSnapshot.get("isItDone").toString(),
                                     documentSnapshot.get("dateOfCounselling").toString(),
                                     documentSnapshot.get("durationOfCounselling").toString(),
                                     Integer.parseInt(documentSnapshot.get("ratingsForSession").toString())));
-
-
                         }
 
+                        List<MyListDataForCounselling> previousStuff = new ArrayList<>();
+                        List<MyListDataForCounselling> upcomingStuff = new ArrayList<>();
 
-                        MyListAdapterForCounselling adapter = new MyListAdapterForCounselling(myListDataForCounsellings);
+                        for( MyListDataForCounselling x : myListDataForCounsellings) {
+                            if(x.getIsItDone().equals("Yes")) {
+                                previousStuff.add(x);
+                            } else {
+                                upcomingStuff.add(x);
+                            }
+                        }
 
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        recyclerView.setAdapter(adapter);
+                        MyListAdapterForCounselling adapter = new MyListAdapterForCounselling(previousStuff);
+                        MyListAdapterForCounselling adapter1 = new MyListAdapterForCounselling(upcomingStuff);
 
+                        recyclerViewupcoming.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerViewupcoming.setAdapter(adapter1);
+
+                        recyclerViewPrevious.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerViewPrevious.setAdapter(adapter);
 
                     }
                 });

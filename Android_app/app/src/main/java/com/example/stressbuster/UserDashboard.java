@@ -1,5 +1,9 @@
 package com.example.stressbuster;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,13 +17,17 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.Objects;
 
 public class UserDashboard extends AppCompatActivity
         implements dashboardFragment.OnFragmentInteractionListener,
             chatbotFragment.OnFragmentInteractionListener,
             mentorConnections.OnFragmentInteractionListener,
             remindersFragment.OnFragmentInteractionListener,
-            userSettingsFragment.OnFragmentInteractionListener{
+            userSettingsFragment.OnFragmentInteractionListener,
+            LovedItFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +37,52 @@ public class UserDashboard extends AppCompatActivity
 
         BottomAppBar bottomAppBar = findViewById(R.id.bottom_app_bar);
         setSupportActionBar(bottomAppBar);
+
+
+
+        final SharedPreferences sharedPref = Objects.requireNonNull(this).getPreferences(Context.MODE_PRIVATE);
+
+        String FbUserName =  sharedPref.getString("FacebookUserID","");
+        String FbUserPass =  sharedPref.getString("FacebookUserPassword","");
+        String IgUserName =  sharedPref.getString("InstagramUserID","");
+        String IgUserPass =  sharedPref.getString("InstagramUserPassword","");
+
+        View view = findViewById(android.R.id.content);
+
+
+        if(FbUserName.equals("") || FbUserPass.equals("")) {
+
+            Snackbar.make(view, "Facebook details are not present. Cannot continue :(", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Add", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance();
+                            bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
+                        }
+                    })
+                    .setActionTextColor(Color.WHITE)
+                    .show();
+
+        }
+        if(IgUserName.equals("") || IgUserPass.equals("")) {
+
+            Snackbar.make(view, "Instagram credentials not found. Cannot continue :(", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Add", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance();
+                            bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
+                        }
+                    })
+                    .setActionTextColor(Color.WHITE)
+                    .show();
+
+        }
+
+        Intent intent = new Intent(this, DataScraper.class);
+        startService(intent);
 
         bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -78,6 +132,14 @@ public class UserDashboard extends AppCompatActivity
                         fragmentTransaction5.addToBackStack(null);
                         fragmentTransaction5.commit();
                         break;
+
+                    case R.id.navigation_chat:
+
+                        FragmentManager fragmentManager6 = getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction6 = fragmentManager6.beginTransaction();
+                        fragmentTransaction6.replace(R.id.fragment_userDashboard, new LovedItFragment());
+                        fragmentTransaction6.addToBackStack(null);
+                        fragmentTransaction6.commit();
 
                 }
                 return false;

@@ -35,11 +35,11 @@
         android:title="Reminders" />
 
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_chat"-->
-<!--        app:showAsAction="always"-->
-<!--        android:icon="@drawable/ic_chat_black_24dp"-->
-<!--        android:title="Chat with friends!"/>-->
+    <item
+        android:id="@+id/navigation_chat"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_chat_bubble_outline_black_24dp"
+        android:title="Lovedit"/>
 
     <item
         android:id="@+id/userSettings"
