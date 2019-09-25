@@ -1,4 +1,6 @@
-import praw
+import praw, json
+
+mental_illnesses = ['depression', 'anxiety', 'stress']
 
 class RedditTarget(object):
 
@@ -10,21 +12,22 @@ class RedditTarget(object):
                                   client_secret=self.secret,
                                   user_agent=self.user_agent)
 
-    def search_subreddit(self, term, params=50):
+    def search_subreddit(self, term, params=20):
         return self.reddit.subreddit(term).top(limit=params)
 
     def get_posts_info(self, term):
         results = []
         search_result = self.search_subreddit(term)
-        for term in search_result:
+
+        for seek in search_result:
 
             author = 'anonymous'
-            title = term.title
-            text = term.selftext
-            comments = term.comments.list()
+            title = seek.title
+            text = seek.selftext
+            comments = seek.comments.list()
 
-            if term.author is not None:
-                author = term.author.name
+            if seek.author is not None:
+                author = seek.author.name
 
             result = {'author': author,
                       'title': title,
@@ -32,8 +35,19 @@ class RedditTarget(object):
                       'comments': comments}
             results.append(result)
 
-        return result
+        return results
 
-# just use get_posts_info for each illness.
-# test = RedditTarget()
-# test.get_posts_info('depression')
+    def scrape(self, mental_illnesses):
+        reddit_results = {}
+
+        for mental_illness in mental_illnesses:
+            reddit_results[mental_illness] = []
+
+            reddit_search = self.get_posts_info(mental_illness)
+            reddit_results[mental_illness] = list(map(lambda x: x['text'], reddit_search))
+
+            filename = 'reddit_' + mental_illness + '.txt'
+            with open(filename, 'w', encoding='utf-8') as f:
+                for result in reddit_results[mental_illness]:
+                    f.write(json.dumps(result) + '\n')
+                f.close()

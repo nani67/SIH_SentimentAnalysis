@@ -1,4 +1,5 @@
 import twitter, json
+from twitter import TwitterError
 
 class TwitterTarget(object):
 
@@ -17,8 +18,8 @@ class TwitterTarget(object):
         self.name = self.user.name
         self.username = None
         self.search_result = {}
-        self.target_user_result = None
         self.results = []
+        print("twitter scraper successfully initialized!")
 
     def get_own_id(self):
         return self.id
@@ -37,13 +38,17 @@ class TwitterTarget(object):
             self.search_result[result.id] = result.screen_name
         return self.search_result
 
-    def set_target_by_username(self, username):
-        self.username = username
-        self.target_user_result = self.api.GetUserTimeline(screen_name=self.username,
-                                                           count=200)
+    def get_feed_of_others(self, username):
 
-        for status in self.target_user_result:
-            # print(status)
+        self.results = []
+
+        try:
+            timeline = self.api.GetUserTimeline(screen_name=username,
+                                                count=10)
+        except TwitterError as te:
+            return te
+
+        for status in timeline:
             id = status.id
             name = status.user.screen_name
             time = status.created_at
@@ -83,14 +88,45 @@ class TwitterTarget(object):
         return self.results
 
     def get_own_feed(self):
-        self.set_target_by_username(self.get_own_username())
+        self.get_feed_of_others(self.get_own_username())
         return self.get_results()
 
     def get_tweeters(self):
         return list(self.results.keys())
 
+    def scrape(self, mental_illnesses):
+        twitter_results = {}
 
-test = TwitterTarget('ChaotiqueEdge')
+        for mental_illness in mental_illnesses:
+            twitter_results[mental_illness] = []
+
+            print("currently handling Twitter information:")
+            twitter_search = self.search_by_parameter(mental_illness)
+
+            users = list(twitter_search.keys())
+            for user in users:
+                self.get_feed_of_others(twitter_search[user])
+
+                if type(self.get_results()) is TwitterError or self.get_results() is []:
+                    continue
+                else:
+                    last_5_posts = list(map(lambda x: x['text'], self.results[0:5]))
+                    last_5_media = list(map(lambda x: x['media'][0].AsDict()['media_url'] if x['media'] is not None else x['media'], self.results[0:5]))
+
+                    search_result = {'user_id': user,
+                                     'texts': last_5_posts,
+                                     'media': last_5_media}
+                    twitter_results[mental_illness].append(search_result)
+
+            filename = 'twitter_' + mental_illness + '.txt'
+            with open(filename, 'w', encoding='utf-8') as f:
+                for result in twitter_results[mental_illness]:
+                    f.write(json.dumps(result) + '\n')
+                f.close()
+
+            print("complete handling Twitter information.")
+
+# test = TwitterTarget('ChaotiqueEdge')
 
 ###############################################################################################################
 # Use search_by_parameters to obtain 20 usernames. Only the same 20 will always be obtained.                  #
@@ -104,8 +140,8 @@ test = TwitterTarget('ChaotiqueEdge')
 # Refer below for an example. It may be helpful to use the get_tweeters() method to see who made posts in that page. #
 # Use get_results() method to get direct access to the results. It is a dictionary.                                  #
 ######################################################################################################################
-test.set_target_by_username("BeyondBrokenDep")
-print(test.get_results())
+# test.get_feed_of_others("BeyondBrokenDep")
+# print(test.get_results())
 
 # Do this:
 # 1) search_by_parameters for mental illnesses

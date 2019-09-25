@@ -1,15 +1,15 @@
-from instagram_private_api import Client, ClientCompatPatch
-
-user_name = 'k_gymnopedie'
-password = 'magnataur'
+from instagram_private_api import Client, ClientCompatPatch, ClientError
+import json
 
 class InstagramScrape(object):
 
     def __init__(self, username, password):
+        print("setting up instagram scraper...")
         self.username = username
         self.password = password
         self.api = Client(username=username, password=password)
         self.user_id = self.api.username_info(self.username)['user']['pk']
+        print("instagram scraper successfully initialized!")
 
     def get_timeline(self):
         return self.api.feed_timeline()
@@ -77,9 +77,13 @@ class InstagramScrape(object):
 
         return result
 
-    def get_user_feed(self, username):
+    def get_user_feed(self, username, id):
         result = []
-        feed = self.api.username_feed(username)['items']
+
+        try:
+            feed = self.api.username_feed(username)['items']
+        except ClientError as err:
+            raise err
 
         for entry in feed:
             if 'carousel_media_count' in list(entry.keys()):
@@ -87,8 +91,12 @@ class InstagramScrape(object):
             else:
                 media = [entry]
             carousel_parent_id = entry['id']
-            text = entry['caption']['text']
-            user_id = entry['caption']["user_id"]
+
+            if not entry['caption'] is None:
+                text = entry['caption']['text']
+            else:
+                text = ''
+
             username = entry['user']['username']
             full_name = entry['user']['full_name']
             for medium in media:
@@ -98,7 +106,7 @@ class InstagramScrape(object):
                     if not i % 2:
                         url = images[i]["url"]
                         image = {"carousel_parent_id": carousel_parent_id,
-                                 "user_id": user_id,
+                                 "user_id": id,
                                  "username": username,
                                  "full_name": full_name,
                                  "media_id": media_id,
@@ -152,9 +160,40 @@ class InstagramScrape(object):
     def get_top_search(self):
         return self.api.top_search()
 
+    def scrape(self, mental_illnesses):
+        instagram_results = {}
+
+        for mental_illness in mental_illnesses:
+            instagram_results[mental_illness] = []
+
+            print("currently handling Instagram information:")
+            ig_result = self.search_results(mental_illness)
+            handle_feed_lst = []
+            for handle in ig_result:
+                handle_feed = self.get_user_feed(handle['username'], handle['id'])
+
+                if type(handle_feed) is not ClientError:
+                    handle_feed_lst.extend(handle_feed)
+
+            print(handle_feed_lst)
+            users = list(map(lambda x: x['user_id'], handle_feed_lst))
+            for user in users:
+                last_5_posts = list(map(lambda x: x['text'], handle_feed_lst[0:5]))
+                search_result = {'id': user,
+                                 'texts': last_5_posts}
+                instagram_results[mental_illness].append(search_result)
+
+            filename = 'instagram_' + mental_illness + '.txt'
+            with open(filename, 'w', encoding='utf-8') as f:
+                for comment in instagram_results[mental_illness]:
+                    f.write(json.dumps(comment))
+                f.close()
+
+            print("complete handling Instagram information.")
+
+
 # Do this:
 # 1) search_results for a mental illness.
 # 2) for each result in results, get result feed and stories
 # 3) get comments in each result and results
 # 4) write somewhere (i think either a txt or csv?)
-# 5)
