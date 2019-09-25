@@ -12,6 +12,18 @@
         android:title="Instagram Credentials" />
 
     <item
+        android:id="@+id/nav03"
+        android:icon="@drawable/ic_filter_vintage_black_24dp"
+        android:title="Twitter Credentials" />
+
+
+    <item
+        android:id="@+id/nav04"
+        android:icon="@drawable/ic_forum_black_24dp"
+        android:title="Reddit Credentials" />
+
+
+    <item
         android:id="@+id/user_privacyPolicy"
         android:icon="@drawable/ic_portrait_black_24dp"
         android:title="Privacy Policy" />

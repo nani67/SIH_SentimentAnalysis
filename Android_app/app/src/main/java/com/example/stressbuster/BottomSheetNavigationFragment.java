@@ -198,22 +198,109 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
                         break;
 
+                    case R.id.nav03:
 
-                    case R.id.user_privacyPolicy:
 
                         final AlertDialog alertDialog3 = new AlertDialog.Builder(getContext()).create();
                         LayoutInflater layoutInflater3 = alertDialog3.getLayoutInflater();
-                        final View view3 = layoutInflater3.inflate(R.layout.user_privacy_policy, null);
+                        final View view3 = layoutInflater3.inflate(R.layout.get_social_media_info_bottomappbar, null);
+                        alertDialog3.setTitle("Twitter Credentials");
                         alertDialog3.setCancelable(true);
+
+                        final EditText userNameOfTwitterInfo = view3.findViewById(R.id.editTextForUserName);
+                        final EditText passwordForTwitterInfo = view3.findViewById(R.id.passwordEditTextForDialog);
+
+                        userNameOfTwitterInfo.setHint(sharedPref.getString("TwitterUserID",""));
+                        passwordForTwitterInfo.setHint(sharedPref.getString("TwitterUserPassword",""));
+
+                        alertDialog3.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                alertDialog3.dismiss();
+                            }
+                        });
+
+
+                        alertDialog3.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                editor.putString("TwitterUserID", userNameOfTwitterInfo.getText().toString());
+                                editor.putString("TwitterUserPassword", passwordForTwitterInfo.getText().toString());
+                                editor.apply();
+
+
+                            }
+                        });
+
                         alertDialog3.setView(view3);
-                        alertDialog3.setTitle("Privacy Policy");
-                        alertDialog3.setButton(DialogInterface.BUTTON_POSITIVE, "Looks Nice!", new DialogInterface.OnClickListener() {
+                        alertDialog3.show();
+
+                        break;
+
+
+
+
+
+
+                    case R.id.nav04:
+
+
+                        final AlertDialog alertDialog4 = new AlertDialog.Builder(getContext()).create();
+                        LayoutInflater layoutInflater4 = alertDialog4.getLayoutInflater();
+                        final View view4 = layoutInflater4.inflate(R.layout.get_social_media_info_bottomappbar, null);
+                        alertDialog4.setTitle("Twitter Credentials");
+                        alertDialog4.setCancelable(true);
+
+                        final EditText userNameOfRedditInfo = view4.findViewById(R.id.editTextForUserName);
+                        final EditText passwordForRedditInfo = view4.findViewById(R.id.passwordEditTextForDialog);
+
+                        userNameOfRedditInfo.setHint(sharedPref.getString("RedditUserID",""));
+                        passwordForRedditInfo.setHint(sharedPref.getString("RedditUserPassword",""));
+
+                        alertDialog4.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                alertDialog4.dismiss();
+                            }
+                        });
+
+
+                        alertDialog4.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                editor.putString("TwitterUserID", userNameOfRedditInfo.getText().toString());
+                                editor.putString("TwitterUserPassword", passwordForRedditInfo.getText().toString());
+                                editor.apply();
+
+
+                            }
+                        });
+
+                        alertDialog4.setView(view4);
+                        alertDialog4.show();
+
+                        break;
+
+
+                    case R.id.user_privacyPolicy:
+
+                        final AlertDialog alertDialog5 = new AlertDialog.Builder(getContext()).create();
+                        LayoutInflater layoutInflater5 = alertDialog5.getLayoutInflater();
+                        final View view5 = layoutInflater5.inflate(R.layout.user_privacy_policy, null);
+                        alertDialog5.setCancelable(true);
+                        alertDialog5.setView(view5);
+                        alertDialog5.setTitle("Privacy Policy");
+                        alertDialog5.setButton(DialogInterface.BUTTON_POSITIVE, "Looks Nice!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dismiss();
                             }
                         });
-                        alertDialog3.show();
+                        alertDialog5.show();
                 }
                 return false;
             }
