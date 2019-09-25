@@ -41,10 +41,10 @@
         android:icon="@drawable/ic_chat_bubble_outline_black_24dp"
         android:title="Lovedit"/>
 
-    <item
-        android:id="@+id/userSettings"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_settings_applications_black_24dp"
-        android:title="Settings" />
+<!--    <item-->
+<!--        android:id="@+id/userSettings"-->
+<!--        app:showAsAction="always"-->
+<!--        android:icon="@drawable/ic_settings_applications_black_24dp"-->
+<!--        android:title="Settings" />-->
 
 </menu>

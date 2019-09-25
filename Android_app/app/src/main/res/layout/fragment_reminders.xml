@@ -32,13 +32,66 @@
         app:layout_constraintBottom_toTopOf="@id/BtnForAddingReminders">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewForReminders"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="8dp"
-            android:padding="8dp" />
+            android:layout_height="wrap_content" >
+
+
+            <TextView
+                android:id="@+id/headingForFacultyReminders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:text="Reminders by Faculty"
+                android:padding="16dp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewForReminders"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/headingForFacultyReminders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="8dp"
+                android:padding="8dp" />
+
+
+
+
+            <TextView
+                android:id="@+id/headingForUserReminders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recyclerViewForReminders"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:text="Your reminders"
+                android:padding="16dp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewForUserReminders"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/headingForUserReminders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="8dp"
+                android:padding="8dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     </ScrollView>
 

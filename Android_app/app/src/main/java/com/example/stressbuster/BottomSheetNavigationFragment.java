@@ -199,8 +199,6 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                         break;
 
 
-
-
                     case R.id.user_privacyPolicy:
 
                         final AlertDialog alertDialog3 = new AlertDialog.Builder(getContext()).create();
@@ -225,16 +223,13 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //dismiss bottom sheet
                 dismiss();
             }
         });
 
-        //Set the coordinator layout behavior
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
 
-        //Set callback
         if (behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }

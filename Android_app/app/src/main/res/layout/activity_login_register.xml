@@ -112,7 +112,7 @@
                     android:id="@+id/CollRollNo"
                     android:padding="8dp"
                     android:layout_margin="8dp"
-                    android:hint="University ID (Roll number)"
+                    android:hint="Class with Section"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/CollName" >

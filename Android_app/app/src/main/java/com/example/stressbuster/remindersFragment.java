@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class remindersFragment extends Fragment {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         final RecyclerView recyclerView = view.findViewById(R.id.recyclerViewForReminders);
+        final RecyclerView recyclerView1 = view.findViewById(R.id.recyclerViewForUserReminders);
 
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("reminders")
             .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -69,18 +71,129 @@ public class remindersFragment extends Fragment {
                     List<DocumentSnapshot> list = Objects.requireNonNull(queryDocumentSnapshots).getDocuments();
                     for(DocumentSnapshot documentSnapshot: list) {
                         myListDataList.put(documentSnapshot.getId(), documentSnapshot.get("reminder").toString());
-                        Log.d("Document IDs", documentSnapshot.getId());
 
                     }
 
                     MyListAdapter adapter = new MyListAdapter(myListDataList);
 
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(adapter);
+                    recyclerView1.setHasFixedSize(true);
+                    recyclerView1.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView1.setAdapter(adapter);
 
                 }
             });
+
+
+        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
+                .document("sampleDoesTheThing")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        final Map<String, String> personalInfo = new HashMap<>();
+
+                        personalInfo.put("collegeClass",documentSnapshot.get("collegeClass").toString());
+                        personalInfo.put("collegeName", documentSnapshot.get("collegeName").toString());
+                        personalInfo.put("userName", documentSnapshot.get("userName").toString());
+
+                        firebaseFirestore.collection("studentsWhoCompletedStuff")
+                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                        List<DocumentSnapshot> documentSnapshots = null;
+                                        if (queryDocumentSnapshots != null) {
+                                            documentSnapshots = queryDocumentSnapshots.getDocuments();
+
+                                            for(final DocumentSnapshot documentSnapshot1: documentSnapshots) {
+
+                                                firebaseFirestore.collection("TeachersAssignmentsList")
+                                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                                assert queryDocumentSnapshots != null;
+                                                                List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                                                                List<FacultyDataReminders> getMyAssignmentList = new ArrayList<>();
+                                                                for(DocumentSnapshot documentSnapshot: documentSnapshots) {
+
+                                                                    String collegeName = Objects.requireNonNull(documentSnapshot.get("UniversityName")).toString();
+                                                                    String className = Objects.requireNonNull(documentSnapshot.get("UniversityClass")).toString();
+
+                                                                    Log.d("CollegeName, ClassName", collegeName+className);
+                                                                    Log.d("CollegeName, ClassName", personalInfo.get("collegeName")+personalInfo.get("collegeClass"));
+
+                                                                    Log.d("Complete Info", documentSnapshot1.get("IdOfTheCompletedAssignment").toString() + "\n" + documentSnapshot1.get("UserWhoCompletedThat"));
+
+                                                                    if(Objects.equals(personalInfo.get("collegeName"), collegeName)
+                                                                            && Objects.equals(personalInfo.get("collegeClass"), className)
+                                                                            && documentSnapshot1.get("IdOfTheCompletedAssignment").toString().equals(documentSnapshot.getId())
+                                                                            && !documentSnapshot1.get("UserWhoCompletedThat").toString().equals(firebaseUser.getEmail())) {
+
+                                                                        getMyAssignmentList.add(new FacultyDataReminders(documentSnapshot.get("assignmentInfo").toString(), documentSnapshot.get("awardedPoints").toString(), documentSnapshot.getId().toString()));
+                                                                    }
+                                                                }
+
+                                                                Log.d("ListOfFacultyReminders", getMyAssignmentList.size()+"");
+                                                                FacultyAwardedAdapter adapter = new FacultyAwardedAdapter(getMyAssignmentList);
+
+                                                                recyclerView.setHasFixedSize(true);
+                                                                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                                recyclerView.setAdapter(adapter);
+
+                                                            }
+                                                        });
+
+
+
+
+
+                                            }
+
+                                        } else {
+
+
+                                            firebaseFirestore.collection("TeachersAssignmentsList")
+                                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                            assert queryDocumentSnapshots != null;
+                                                            List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                                                            List<FacultyDataReminders> getMyAssignmentList = new ArrayList<>();
+                                                            for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+
+                                                                String collegeName = Objects.requireNonNull(documentSnapshot.get("UniversityName")).toString();
+                                                                String className = Objects.requireNonNull(documentSnapshot.get("UniversityClass")).toString();
+
+                                                                Log.d("CollegeName, ClassName", collegeName + className);
+                                                                Log.d("CollegeName, ClassName", personalInfo.get("collegeName") + personalInfo.get("collegeClass"));
+
+
+                                                                if (Objects.equals(personalInfo.get("collegeName"), collegeName)
+                                                                        && Objects.equals(personalInfo.get("collegeClass"), className)) {
+
+                                                                    getMyAssignmentList.add(new FacultyDataReminders(documentSnapshot.get("assignmentInfo").toString(), documentSnapshot.get("awardedPoints").toString(), documentSnapshot.getId().toString()));
+                                                                }
+                                                            }
+
+                                                            Log.d("ListOfFacultyReminders", getMyAssignmentList.size() + "");
+                                                            FacultyAwardedAdapter adapter = new FacultyAwardedAdapter(getMyAssignmentList);
+
+                                                            recyclerView.setHasFixedSize(true);
+                                                            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                                            recyclerView.setAdapter(adapter);
+
+                                                        }
+                                                    });
+
+                                        }
+
+
+                                    }
+                                });
+
+
+                    }
+                });
+
 
 
         MaterialButton materialButton = view.findViewById(R.id.BtnForAddingReminders);
