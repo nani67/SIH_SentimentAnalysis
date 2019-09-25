@@ -54,5 +54,21 @@ for mental_illness in mental_illnesses:
     reddit_search = reddit_handle.get_posts_info(mental_illness)
     reddit_results[mental_illness] = list(map(lambda x: x['text'], reddit_search))
     filename = 'reddit_' + mental_illness + '.txt'
-
+    
+    
     write_comments_to_file(filename, instagram_results[mental_illness])
+    
+    reddit_list_data = list(reddit_results.values())
+    instagram_list_data = list(instagram_results.values())
+    twitter_list_data = list(twitter_results.values())
+    
+    loaded_model = pickle.load(open('finalized_model.sav', 'rb'))
+    
+    result_ig = loaded_model.predict(instagram_list_data)
+    result_rd = loaded_model.predict(reddit_list_data)
+    result_tw = loaded_model.predict(twitter_list_data)
+    
+    
+    print(result_ig)
+    print(result_rd)
+    print(result_tw)
