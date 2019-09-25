@@ -24,12 +24,13 @@
         android:id="@+id/delStuffRem"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="#F44336"
+        android:backgroundTint="#9575CD"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/name"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="X"
+        android:drawableStart="@drawable/ic_toys_black_24dp"
+        android:text="0"
         android:layout_margin="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,9 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -75,7 +78,7 @@ public class chatbotFragment extends Fragment implements AIListener {
         } else {
 
             final AIConfiguration config = new AIConfiguration(
-                    "68fd4b7aa23f4c07b9270246d9dc1e0d",
+                    "495fd826ca014aea827b44b4a19208ec",
                     AIConfiguration.SupportedLanguages.English,
                     AIConfiguration.RecognitionEngine.System);
 
@@ -93,11 +96,11 @@ public class chatbotFragment extends Fragment implements AIListener {
     private AIDataService aiDataService;
     private AIRequest aiRequest;
 
-
     LinearLayout layout;
     private ScrollView scrollView;
 
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,12 +110,41 @@ public class chatbotFragment extends Fragment implements AIListener {
         scrollView = view.findViewById(R.id.scrollView);
         layout = view.findViewById(R.id.chatbotForChatbotFragment);
 
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         aiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 aiService.startListening();
             }
         });
+
+
+        aiRequest.setQuery("CLIENT_UNIQUE_ID -- " + firebaseUser.getUid());
+
+        new AsyncTask<AIRequest, Void, AIResponse>() {
+
+            @Override
+            protected AIResponse doInBackground(AIRequest... requests) {
+                final AIRequest request = requests[0];
+                try {
+                    final AIResponse response = aiDataService.request(aiRequest);
+                    Log.d("Response", response.toString());
+                    return response;
+                } catch (AIServiceException e) {
+                    Log.d("Exception", e.toString());
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(AIResponse aiResponse) {
+                if (aiResponse != null) {
+                    final String responseQuery = aiResponse.getResult().getFulfillment().getSpeech();
+                    addMessageBox(responseQuery, 2);
+                }
+            }
+
+        }.execute(aiRequest);
 
         FloatingActionButton sendTextMsg = view.findViewById(R.id.sendTextMessageToChatbot);
         final EditText editText = view.findViewById(R.id.editTextForChatbot);
@@ -123,6 +155,7 @@ public class chatbotFragment extends Fragment implements AIListener {
             public void onClick(View view) {
 
                 String query = editText.getText().toString();
+                editText.setText("");
                 addMessageBox(query, 1);
                 aiRequest.setQuery(query);
 
@@ -197,9 +230,10 @@ public class chatbotFragment extends Fragment implements AIListener {
     private void addMessageBox(String message, int type) {
         TextView textView = new TextView(getContext());
         textView.setText(message);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(8, 8, 8, 16);
         textView.setLayoutParams(lp);
+
 
         if (type == 1) {
             textView.setBackgroundResource(R.drawable.rounded_corner1);

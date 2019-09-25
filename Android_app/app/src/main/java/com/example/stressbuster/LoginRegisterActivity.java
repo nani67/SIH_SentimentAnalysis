@@ -121,7 +121,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
 
                                         userInfo.put("userName", nameOfTheuser);
                                         userInfo.put("collegeName", collegeName);
-                                        userInfo.put("rollNumber", CollRollNo);
+                                        userInfo.put("collegeClass", CollRollNo);
 
                                         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo").document("sampleDoesTheThing")
                                                 .set(userInfo)

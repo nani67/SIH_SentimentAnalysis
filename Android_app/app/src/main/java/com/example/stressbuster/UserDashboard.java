@@ -123,15 +123,15 @@ public class UserDashboard extends AppCompatActivity
                         fragmentTransaction4.addToBackStack(null);
                         fragmentTransaction4.commit();
                         break;
-
-                    case R.id.userSettings:
-
-                        FragmentManager fragmentManager5 = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction5 = fragmentManager5.beginTransaction();
-                        fragmentTransaction5.replace(R.id.fragment_userDashboard, new userSettingsFragment());
-                        fragmentTransaction5.addToBackStack(null);
-                        fragmentTransaction5.commit();
-                        break;
+//
+//                    case R.id.userSettings:
+//
+//                        FragmentManager fragmentManager5 = getSupportFragmentManager();
+//                        FragmentTransaction fragmentTransaction5 = fragmentManager5.beginTransaction();
+//                        fragmentTransaction5.replace(R.id.fragment_userDashboard, new userSettingsFragment());
+//                        fragmentTransaction5.addToBackStack(null);
+//                        fragmentTransaction5.commit();
+//                        break;
 
                     case R.id.navigation_chat:
 
