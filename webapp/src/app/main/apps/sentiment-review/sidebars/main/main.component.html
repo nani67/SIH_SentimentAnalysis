@@ -1,0 +1,53 @@
+<div class="sidebar-content">
+
+    <div class="card">
+
+        <!-- SIDEBAR HEADER -->
+        <div class="header p-24" fxLayout="row" fxLayoutAlign="start center">
+
+            <!-- USER -->
+<!--            <img [src]="user.avatar" class="avatar mr-16" [alt]="user.name"/>-->
+            <mat-icon color="primary" class="okay-icon">check_circle</mat-icon>
+            <span class="h5">All Microservices Running</span>
+            <!-- / USER -->
+
+        </div>
+        <!-- / SIDEBAR HEADER -->
+
+        <!-- SIDEBAR CONTENT -->
+        <div class="content py-16" fusePerfectScrollbar>
+
+            <div class="nav material2">
+
+                <div class="nav-item" aria-label="inbox">
+                    <a class="nav-link" matRipple (click)="changeFilter('insta')"
+                       [ngClass]="{'active accent':filterBy ==='insta'}">
+                        <fa-icon [icon]="faInstagram"></fa-icon><span class="title">Instagram</span>
+                    </a>
+                </div>
+
+                <div class="nav-item" aria-label="frequently contacted" (click)="changeFilter('fb')">
+                    <a class="nav-link" matRipple [ngClass]="{'active accent':filterBy ==='fb'}">
+                        <fa-icon [icon]="faFacebook"></fa-icon><div class="title">Facebook</div>
+                    </a>
+                </div>
+
+                <div class="nav-item" aria-label="starred" (click)="changeFilter('reddit')">
+                    <a class="nav-link" matRipple [ngClass]="{'active accent':filterBy ==='reddit'}">
+                        <fa-icon [icon]="faReddit"></fa-icon><div class="title">Reddit</div>
+                    </a>
+                </div>
+
+                <div class="nav-item" aria-label="starred" (click)="changeFilter('twitter')">
+                    <a class="nav-link" matRipple [ngClass]="{'active accent':filterBy ==='twitter'}">
+                        <fa-icon [icon]="faTwitter"></fa-icon><div class="title">Twitter</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- / SIDEBAR CONTENT -->

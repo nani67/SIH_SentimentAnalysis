@@ -1,0 +1,102 @@
+<mat-table #table [dataSource]="dataSource"
+           [@animateStagger]="{value:'50'}">
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="checkbox">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let sentiment">
+            <mat-checkbox [(ngModel)]="checkboxes[sentiment.id]" (ngModelChange)="onSelectedChange(sentiment.id)"
+                          (click)="$event.stopPropagation()">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Avatar Column -->
+    <ng-container matColumnDef="avatar">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let sentiment">
+            <img class="avatar" *ngIf="sentiment.avatar" [alt]="sentiment.name"
+                 [src]="'assets/images/avatars/'+sentiment.avatar"/>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let contact">
+            <p class="text-truncate font-weight-600">{{contact.name}} {{contact.lastName}}</p>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="dept">
+        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-sm>Department</mat-header-cell>
+        <mat-cell *matCellDef="let contact" fxHide fxShow.gt-sm>
+            <p class="email text-truncate">
+                {{contact.department}}
+            </p>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Risk Level Column -->
+    <ng-container matColumnDef="risk_lev">
+        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-md>Risk Level</mat-header-cell>
+        <mat-cell *matCellDef="let sentiment" fxHide fxShow.gt-md>
+            <p class="text-truncate">
+
+
+               <mat-chip-list>
+                   <mat-chip *ngIf="sentiment.risklevelCurrent == 5"> HIGH </mat-chip>
+                   <mat-chip *ngIf="sentiment.risklevelCurrent > 2 && sentiment.risklevelCurrent < 5"> MED </mat-chip>
+                   <mat-chip *ngIf="sentiment.risklevelCurrent <= 2"> LOW </mat-chip>
+               </mat-chip-list>
+            </p>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Accuracy Column -->
+    <ng-container matColumnDef="accuracy">
+        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-md>Accuracy</mat-header-cell>
+        <mat-cell *matCellDef="let contact" fxHide fxShow.gt-md>
+            <p class="job-title text-truncate">
+                {{contact.accuracyCurrent}}
+            </p>
+        </mat-cell>
+    </ng-container>
+
+
+    <!-- Buttons Column -->
+    <ng-container matColumnDef="buttons">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let contact">
+            <div fxFlex="row" fxLayoutAlign="end center">
+                <button mat-icon-button (click)="$event.stopPropagation();openChat(contact.id)" aria-label="Toggle star">
+                    <mat-icon>message</mat-icon>
+                </button>
+
+                <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="More"
+                        (click)="$event.stopPropagation();">
+                    <mat-icon class="secondary-text">more_vert</mat-icon>
+                </button>
+
+                <mat-menu #moreMenu="matMenu">
+                    <button mat-menu-item aria-label="remove" (click)="reportInaccuracy(contact)">
+                        <mat-icon>offline_bolt</mat-icon>
+                        <span>Report Inaccurate Prediction</span>
+                    </button>
+                </mat-menu>
+            </div>
+
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let sentimentReview; columns: displayedColumns;"
+             class="contact"
+             (click)="openDetailed(sentimentReview)"
+             [ngClass]="{'accent-50':checkboxes[sentimentReview.id]}"
+             matRipple
+             [@animate]="{value:'*',params:{y:'100%'}}">
+    </mat-row>
+</mat-table>
+
+
