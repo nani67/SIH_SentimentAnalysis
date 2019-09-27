@@ -120,7 +120,7 @@ public class chatbotFragment extends Fragment implements AIListener {
         });
 
 
-        aiRequest.setQuery("CLIENT_UNIQUE_ID -- " + firebaseUser.getUid());
+        aiRequest.setQuery("CLIENT_UNIQUE_ID -- " + Objects.requireNonNull(firebaseUser).getUid());
 
         new AsyncTask<AIRequest, Void, AIResponse>() {
 

@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -111,6 +115,25 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
         dialog.setContentView(contentView);
 
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+
+        final WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        int dialogWindowWidth = (int) (width * 0.9f);
+        // Set alert dialog height equal to screen height 70%
+        int dialogWindowHeight = (int) (height * 0.9f);
+
+        layoutParams.width = dialogWindowWidth;
+        layoutParams.height = dialogWindowHeight;
+
+
+
+
         //implement navigation menu item click event
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -120,39 +143,72 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
                         final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
                         LayoutInflater layoutInflater = alertDialog.getLayoutInflater();
-                        final View view = layoutInflater.inflate(R.layout.get_social_media_info_bottomappbar, null);
-                        alertDialog.setTitle("Facebook Credentials");
+
+                        final View view = layoutInflater.inflate(R.layout.pacebook_like_loginpage, null);
                         alertDialog.setCancelable(true);
 
-                        final EditText userNameOfFacebookInfo = view.findViewById(R.id.editTextForUserName);
-                        final EditText passwordForFacebookInfo = view.findViewById(R.id.passwordEditTextForDialog);
+                        final EditText userNameOfFacebookInfo = view.findViewById(R.id.getUserNameOfPacebook);
+                        final EditText passwordForFacebookInfo = view.findViewById(R.id.getPasswordOfPacebook);
 
-                        userNameOfFacebookInfo.setHint(sharedPref.getString("FacebookUserID",""));
-                        passwordForFacebookInfo.setHint(sharedPref.getString("FacebookUserPassword",""));
-
-                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                        final Button loginDetails = view.findViewById(R.id.loginButtonForpacebook);
+                        loginDetails.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
+                            public void onClick(View view) {
 
-
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                        editor.putString("FacebookUserID", userNameOfFacebookInfo.getText().toString());
-                                        editor.putString("FacebookUserPassword", passwordForFacebookInfo.getText().toString());
-                                        editor.apply();
-
+                                editor.putString("FacebookUserID", userNameOfFacebookInfo.getText().toString());
+                                editor.putString("FacebookUserPassword", passwordForFacebookInfo.getText().toString());
+                                editor.apply();
 
                             }
                         });
-
 
                         alertDialog.setView(view);
                         alertDialog.show();
+
+
+                        alertDialog.getWindow().setAttributes(layoutParams);
+
+
+
+
+
+
+
+
+
+//                        final View view = layoutInflater.inflate(R.layout.get_social_media_info_bottomappbar, null);
+//                        alertDialog.setTitle("Facebook Credentials");
+//                        alertDialog.setCancelable(true);
+//
+//                        final EditText userNameOfFacebookInfo = view.findViewById(R.id.editTextForUserName);
+//                        final EditText passwordForFacebookInfo = view.findViewById(R.id.passwordEditTextForDialog);
+//
+//                        userNameOfFacebookInfo.setHint(sharedPref.getString("FacebookUserID",""));
+//                        passwordForFacebookInfo.setHint(sharedPref.getString("FacebookUserPassword",""));
+//
+//                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                alertDialog.dismiss();
+//                            }
+//                        });
+//
+//
+//                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                        editor.putString("FacebookUserID", userNameOfFacebookInfo.getText().toString());
+//                                        editor.putString("FacebookUserPassword", passwordForFacebookInfo.getText().toString());
+//                                        editor.apply();
+//
+//
+//                            }
+//                        });
+//
+//
+//                        alertDialog.setView(view);
+//                        alertDialog.show();
 
 
 
@@ -162,39 +218,27 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
                         final AlertDialog alertDialog2 = new AlertDialog.Builder(getContext()).create();
                         LayoutInflater layoutInflater2 = alertDialog2.getLayoutInflater();
-                        final View view2 = layoutInflater2.inflate(R.layout.get_social_media_info_bottomappbar, null);
-                        alertDialog2.setTitle("Instagram Credentials");
+                        final View view2 = layoutInflater2.inflate(R.layout.finstagram_identical_stuffpage, null);
                         alertDialog2.setCancelable(true);
 
-                        final EditText userNameOfInstagramInfo = view2.findViewById(R.id.editTextForUserName);
-                        final EditText passwordForInstagramInfo = view2.findViewById(R.id.passwordEditTextForDialog);
+                        final EditText userNameOfInstagramInfo = view2.findViewById(R.id.FinstagramUser);
+                        final EditText passwordForInstagramInfo = view2.findViewById(R.id.finstagramPassword);
+                        final Button button = view2.findViewById(R.id.loginButtonForFinstagram);
 
-                        userNameOfInstagramInfo.setHint(sharedPref.getString("InstagramUserID",""));
-                        passwordForInstagramInfo.setHint(sharedPref.getString("InstagramUserPassword",""));
-
-                        alertDialog2.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                        button.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                alertDialog2.dismiss();
-                            }
-                        });
-
-
-                        alertDialog2.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onClick(View view) {
 
                                 editor.putString("InstagramUserID", userNameOfInstagramInfo.getText().toString());
                                 editor.putString("InstagramUserPassword", passwordForInstagramInfo.getText().toString());
                                 editor.apply();
-
-
                             }
                         });
 
+
                         alertDialog2.setView(view2);
                         alertDialog2.show();
+                        alertDialog2.getWindow().setAttributes(layoutParams);
 
                         break;
 
@@ -203,39 +247,30 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
                         final AlertDialog alertDialog3 = new AlertDialog.Builder(getContext()).create();
                         LayoutInflater layoutInflater3 = alertDialog3.getLayoutInflater();
-                        final View view3 = layoutInflater3.inflate(R.layout.get_social_media_info_bottomappbar, null);
-                        alertDialog3.setTitle("Twitter Credentials");
+                        final View view3 = layoutInflater3.inflate(R.layout.twitter_identical_page, null);
                         alertDialog3.setCancelable(true);
 
-                        final EditText userNameOfTwitterInfo = view3.findViewById(R.id.editTextForUserName);
-                        final EditText passwordForTwitterInfo = view3.findViewById(R.id.passwordEditTextForDialog);
+                        final EditText userNameOfTwitterInfo = view3.findViewById(R.id.TweeterUserNameText);
+                        final EditText passwordForTwitterInfo = view3.findViewById(R.id.TweeterPassword);
 
-                        userNameOfTwitterInfo.setHint(sharedPref.getString("TwitterUserID",""));
-                        passwordForTwitterInfo.setHint(sharedPref.getString("TwitterUserPassword",""));
-
-                        alertDialog3.setButton(AlertDialog.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                        final MaterialButton apple = view3.findViewById(R.id.loginForTweeter);
+                        apple.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                alertDialog3.dismiss();
-                            }
-                        });
-
-
-                        alertDialog3.setButton(AlertDialog.BUTTON_NEUTRAL, "Update", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onClick(View view) {
 
                                 editor.putString("TwitterUserID", userNameOfTwitterInfo.getText().toString());
                                 editor.putString("TwitterUserPassword", passwordForTwitterInfo.getText().toString());
                                 editor.apply();
-
-
                             }
                         });
 
+
                         alertDialog3.setView(view3);
                         alertDialog3.show();
+
+                        alertDialog3.getWindow().setAttributes(layoutParams);
+
+
 
                         break;
 
