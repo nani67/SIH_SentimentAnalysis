@@ -1,74 +1,154 @@
-import instagram_infiltrate
-import twitter_infiltrate
-import reddit_scrape
+import re
+from os.path import join
 
-mental_illnesses = ['depression', 'anxiety', 'stress', 'suicide', 'bipolar disorder']
+from instagram_infiltrate import InstagramScrape
+from twitter_infiltrate import TwitterTarget
+from reddit_scrape import RedditTarget
+import json
 
-# need to take relevant values off a person's account
-instagram_handle = instagram_infiltrate.InstagramScrape('xxxxxxxxxxxx', 'xxxxxxxxxxxxx')
-twitter_handle = twitter_infiltrate.TwitterTarget('ChaotiqueEdge')
-reddit_handle = reddit_scrape.RedditTarget()
+import nltk
 
-instagram_results = {}
-twitter_results = {}
-reddit_results = {}
+from nltk import tokenize
+from nltk.classify import NaiveBayesClassifier
+from nltk.sentiment import SentimentAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.util import *
+from nltk.corpus import stopwords
+from nltk.classify import SklearnClassifier
 
-def write_comments_to_file(filename, lst):
-    print()
+sid = SentimentIntensityAnalyzer()
 
-    if len(lst) == 0:
-        print('No comments to write.')
-        return
 
-    with open(filename, 'w', encoding='utf-8') as f:
-        for comment in lst:
-            f.write(comment + '\n')
+def scrape():
+    # instagram_handle = InstagramScrape('xxx', 'xxx')
+    # twitter_handle = TwitterTarget('ChaotiqueEdge')
+    reddit_handle = RedditTarget()
+    mental_illnesses = ['depression']
 
-    print('Wrote {} comments to {}'.format(len(lst), filename))
+    # instagram_handle.scrape(mental_illnesses)
+    # twitter_handle.scrape(mental_illnesses)
+    reddit_handle.scrape(mental_illnesses)
 
-for mental_illness in mental_illnesses:
-    instagram_results[mental_illness] = []
-    twitter_results[mental_illness] = []
-    reddit_results[mental_illness] = []
+# scrape()
 
-    # Scraping instagram information
-    ig_result = instagram_handle.search_results(mental_illness)
-    handle_feed_lst = []
-    for handle in ig_result:
-        handle_feed = instagram_handle.get_user_feed(handle['username'])
-        handle_feed_lst.append(handle_feed)
+def read_json_file(filename):
+    with open(filename) as json_file:
+        data = json.load(json_file)
+    return data
 
-    instagram_results[mental_illness] = list(map(lambda x: x['text'], handle_feed_lst))
-    filename = 'instagram_' + mental_illness + '.txt'
 
-    write_comments_to_file(filename, instagram_results[mental_illness])
+def get_instagram_json(file):
+    data = read_json_file(file)
+    key = list(data.keys())[0]
+    return data[key]
 
-    # Scraping twitter information
-    twitter_search = twitter_handle.search_by_parameter(mental_illness)
-    twitter_results[mental_illness] = list(map(lambda x: x['text'], twitter_search))
-    filename = 'twitter_' + mental_illness + '.txt'
 
-    write_comments_to_file(filename, instagram_results[mental_illness])
+def get_twitter_json(file):
+    data = read_json_file(file)
+    return data
 
-    # Scraping reddit information
-    reddit_search = reddit_handle.get_posts_info(mental_illness)
-    reddit_results[mental_illness] = list(map(lambda x: x['text'], reddit_search))
-    filename = 'reddit_' + mental_illness + '.txt'
-    
-    
-    write_comments_to_file(filename, instagram_results[mental_illness])
-    
-    reddit_list_data = list(reddit_results.values())
-    instagram_list_data = list(instagram_results.values())
-    twitter_list_data = list(twitter_results.values())
-    
-    loaded_model = pickle.load(open('finalized_model.sav', 'rb'))
-    
-    result_ig = loaded_model.predict(instagram_list_data)
-    result_rd = loaded_model.predict(reddit_list_data)
-    result_tw = loaded_model.predict(twitter_list_data)
-    
-    
-    print(result_ig)
-    print(result_rd)
-    print(result_tw)
+
+def get_reddit_json(file):
+    data = read_json_file(file)
+    return data
+
+
+def get_top_5_texts(lst):
+    all_recorded_users = []
+    texts = {}
+    use_id = True
+
+    # print(lst)
+
+    try:
+        val = lst[0]['id']
+    except KeyError as ke:
+        use_id = False
+
+    if use_id is True:
+        all_recorded_users_double_counted = list(map(lambda x: x['id'], lst))
+
+        for user in all_recorded_users_double_counted:
+            if user not in all_recorded_users:
+                all_recorded_users.append(user)
+
+        for user in all_recorded_users:
+            filtered = list(filter(lambda x: x['id'] == user, lst))
+            top_5 = list(filter(lambda x: len(x['text']) != 0, filtered))
+            top_5 = list(map(lambda x: x['text'], top_5))
+
+            if len(top_5) > 5:
+                top_5 = top_5[0:5]
+
+            texts[user] = top_5
+    else:
+        all_recorded_users_double_counted = list(map(lambda x: x['author'], lst))
+
+        for user in all_recorded_users_double_counted:
+            if user not in all_recorded_users:
+                all_recorded_users.append(user)
+
+        for user in all_recorded_users:
+            filtered = list(filter(lambda x: x['author'] == user, lst))
+            top_5 = list(filter(lambda x: len(x['text']) != 0 or len(x['title']) != 0, filtered))
+            top_5 = list(map(lambda x: x['text'], top_5))
+
+            if len(top_5) > 5:
+                top_5 = top_5[0:5]
+
+            texts[user] = top_5
+
+    return texts
+
+
+def clean_tweet(tweet):
+    return ' '.join(re.sub("(@(\w+))|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|((http|https|ftp)://[a-zA-Z0-9\\./]+)|(#(\w+))"," ", tweet).split())
+
+instagram_depression = get_top_5_texts(get_instagram_json('instagram_depression.json'))
+for user in list(instagram_depression.keys()):
+    instagram_depression[user] = list(map(lambda x: tokenize.sent_tokenize(x), instagram_depression[user]))
+
+# instagram_anxiety = get_top_5_texts(get_instagram_json('instagram_anxiety.json'))
+# instagram_stress = get_top_5_texts(get_instagram_json('instagram_stress.json'))
+
+twitter_depression = get_top_5_texts(get_twitter_json('twitter_depression.json'))
+for user in list(twitter_depression.keys()):
+    twitter_depression[user] = twitter_depression[user][0]
+    twitter_depression[user] = list(map(lambda x: clean_tweet(x), twitter_depression[user]))
+    twitter_depression[user] = list(map(lambda x: tokenize.sent_tokenize(x), twitter_depression[user]))
+# twitter_anxiety = get_top_5_texts(get_twitter_json('twitter_anxiety.json'))
+# twitter_stress = get_top_5_texts(get_twitter_json('twitter_stress.json'))
+
+reddit_depression = get_top_5_texts(get_reddit_json('reddit_depression.json'))
+for user in list(reddit_depression.keys()):
+    reddit_depression[user] = list(map(lambda x: tokenize.sent_tokenize(x), reddit_depression[user]))
+# reddit_anxiety = get_top_5_texts(get_reddit_json('reddit_anxiety.json'))
+# reddit_stress = get_top_5_texts(get_reddit_json('reddit_stress.json'))
+
+def get_sentiment_percentage(sentiments):
+    results = {}
+    for user in list(sentiments.keys()):
+        summary = {'positive': 0, 'negative': 0, 'neutral': 0}
+        total = len(sentiments[user])
+        for sentiment in sentiments[user]:
+            for sentence in sentiment:
+                sentence = clean_tweet(sentence)
+                ss = sid.polarity_scores(sentence)
+                print("sentence: ", sentence)
+                print("ss: ", ss)
+                if ss['compound'] == 0:
+                    summary['neutral'] = summary['neutral'] + 1
+                elif ss['compound'] < 0:
+                    summary['negative'] = summary['negative'] + 1
+                else:
+                    summary['positive'] = summary['positive'] + 1
+        results[user] = summary
+    return results
+
+
+# print(get_sentiment_percentage(instagram_depression))
+# print(get_sentiment_percentage(twitter_depression))
+# print(get_sentiment_percentage(reddit_depression))
+
+# Instagram => Check caption, picture and extract both for processing
+# Twitter => Check twitter posts
