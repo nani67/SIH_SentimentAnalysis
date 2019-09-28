@@ -61,12 +61,12 @@ public class mentorConnections extends Fragment {
                         List<MyListDataForCounselling> myListDataForCounsellings = new ArrayList<>();
                         for(DocumentSnapshot documentSnapshot: list) {
 
-                            myListDataForCounsellings.add(new MyListDataForCounselling(documentSnapshot.get("typeOfCounselling").toString(),
-                                    documentSnapshot.get("counsellorName").toString(),
-                                    documentSnapshot.get("isItDone").toString(),
-                                    documentSnapshot.get("dateOfCounselling").toString(),
-                                    documentSnapshot.get("durationOfCounselling").toString(),
-                                    Integer.parseInt(documentSnapshot.get("ratingsForSession").toString())));
+                            myListDataForCounsellings.add(new MyListDataForCounselling(Objects.requireNonNull(documentSnapshot.get("typeOfCounselling")).toString(),
+                                    Objects.requireNonNull(documentSnapshot.get("counsellorName")).toString(),
+                                    Objects.requireNonNull(documentSnapshot.get("isItDone")).toString(),
+                                    Objects.requireNonNull(documentSnapshot.get("dateOfCounselling")).toString(),
+                                    Objects.requireNonNull(documentSnapshot.get("durationOfCounselling")).toString(),
+                                    Integer.parseInt(Objects.requireNonNull(documentSnapshot.get("ratingsForSession")).toString())));
                         }
 
                         List<MyListDataForCounselling> previousStuff = new ArrayList<>();

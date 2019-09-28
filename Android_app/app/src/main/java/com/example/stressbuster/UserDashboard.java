@@ -3,7 +3,6 @@ package com.example.stressbuster;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -52,31 +51,13 @@ public class UserDashboard extends AppCompatActivity
 
         if(FbUserName.equals("") || FbUserPass.equals("")) {
 
-            Snackbar.make(view, "Facebook details are not present. Cannot continue :(", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Add", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance();
-                            bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
-                        }
-                    })
-                    .setActionTextColor(Color.WHITE)
+            Snackbar.make(view, "Facebook details are not present. Cannot continue :(", Snackbar.LENGTH_LONG)
                     .show();
 
         }
         if(IgUserName.equals("") || IgUserPass.equals("")) {
 
             Snackbar.make(view, "Instagram credentials not found. Cannot continue :(", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Add", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            BottomSheetDialogFragment bottomSheetDialogFragment = BottomSheetNavigationFragment.newInstance();
-                            bottomSheetDialogFragment.show(getSupportFragmentManager(), "Bottom Sheet Dialog Fragment");
-                        }
-                    })
-                    .setActionTextColor(Color.WHITE)
                     .show();
 
         }
