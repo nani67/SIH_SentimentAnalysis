@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
@@ -49,18 +48,18 @@ public class UserDashboard extends AppCompatActivity
         View view = findViewById(android.R.id.content);
 
 
-        if(FbUserName.equals("") || FbUserPass.equals("")) {
-
-            Snackbar.make(view, "Facebook details are not present. Cannot continue :(", Snackbar.LENGTH_LONG)
-                    .show();
-
-        }
-        if(IgUserName.equals("") || IgUserPass.equals("")) {
-
-            Snackbar.make(view, "Instagram credentials not found. Cannot continue :(", Snackbar.LENGTH_INDEFINITE)
-                    .show();
-
-        }
+//        if(FbUserName.equals("") || FbUserPass.equals("")) {
+//
+//            Snackbar.make(view, "Facebook details are not present. Cannot continue :(", Snackbar.LENGTH_LONG)
+//                    .show();
+//
+//        }
+//        if(IgUserName.equals("") || IgUserPass.equals("")) {
+//
+//            Snackbar.make(view, "Instagram credentials not found. Cannot continue :(", Snackbar.LENGTH_LONG)
+//                    .show();
+//
+//        }
 
         Intent intent = new Intent(this, DataScraper.class);
         startService(intent);

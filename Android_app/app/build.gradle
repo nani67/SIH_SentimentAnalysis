@@ -43,10 +43,8 @@ dependencies {
     implementation 'com.github.sujithkanna:smileyrating:1.6.8'
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
 
-    implementation 'ai.api:sdk:2.0.7@aar'
-
+    implementation 'io.kommunicate:kommunicate:1.9.0'
     implementation 'org.apache.logging.log4j:log4j-api:2.8.2'
-    implementation 'ai.api:libai:1.4.8'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'commons-io:commons-io:2.4'
 

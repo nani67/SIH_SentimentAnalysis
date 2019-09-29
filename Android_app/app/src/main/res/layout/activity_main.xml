@@ -44,7 +44,7 @@
             app:layout_constraintTop_toBottomOf="@id/appNameLoadingScreen"
             android:layout_margin="8dp"
             android:textAlignment="center"
-            android:text="Empowering Education"
+            android:text="Your friend, First."
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:padding="8dp" />

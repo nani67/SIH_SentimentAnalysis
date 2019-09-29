@@ -107,32 +107,38 @@ public class remindersFragment extends Fragment {
                                             for(final DocumentSnapshot documentSnapshot1: documentSnapshots) {
 
                                                 firebaseFirestore.collection("TeachersAssignmentsList")
-                                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                        .get()
+                                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                             @Override
-                                                            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                                 assert queryDocumentSnapshots != null;
                                                                 List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                                                                 List<FacultyDataReminders> getMyAssignmentList = new ArrayList<>();
+
+                                                                Log.d("Total Fac docs",queryDocumentSnapshots.size()+"");
                                                                 for(DocumentSnapshot documentSnapshot: documentSnapshots) {
 
                                                                     String collegeName = Objects.requireNonNull(documentSnapshot.get("UniversityName")).toString();
                                                                     String className = Objects.requireNonNull(documentSnapshot.get("UniversityClass")).toString();
 
-                                                                    Log.d("CollegeName, ClassName", collegeName+className);
-                                                                    Log.d("CollegeName, ClassName", personalInfo.get("collegeName")+personalInfo.get("collegeClass"));
-
-                                                                    Log.d("Complete Info", documentSnapshot1.get("IdOfTheCompletedAssignment").toString() + "\n" + documentSnapshot1.get("UserWhoCompletedThat"));
+                                                                    Log.d("College Name", personalInfo.get("collegeName") + " " + collegeName);
+                                                                    Log.d("College Class", personalInfo.get("collegeClass") + " " + className);
+                                                                    Log.d("College ID", documentSnapshot1.get("IdOfTheCompletedAssignment").toString() + " " + documentSnapshot.getId());
+                                                                    Log.d("College who did it", documentSnapshot1.get("UserWhoCompletedThat").toString() + " " + firebaseUser.getEmail());
 
                                                                     if(Objects.equals(personalInfo.get("collegeName"), collegeName)
                                                                             && Objects.equals(personalInfo.get("collegeClass"), className)
                                                                             && documentSnapshot1.get("IdOfTheCompletedAssignment").toString().equals(documentSnapshot.getId())
                                                                             && !documentSnapshot1.get("UserWhoCompletedThat").toString().equals(firebaseUser.getEmail())) {
 
-                                                                        getMyAssignmentList.add(new FacultyDataReminders(documentSnapshot.get("assignmentInfo").toString(), documentSnapshot.get("awardedPoints").toString(), documentSnapshot.getId().toString()));
+                                                                        getMyAssignmentList.add(new FacultyDataReminders(
+                                                                                Objects.requireNonNull(documentSnapshot.get("assignmentInfo")).toString(),
+                                                                                Objects.requireNonNull(documentSnapshot.get("awardedPoints")).toString(),
+                                                                                documentSnapshot.getId()));
+
                                                                     }
                                                                 }
 
-                                                                Log.d("ListOfFacultyReminders", getMyAssignmentList.size()+"");
                                                                 FacultyAwardedAdapter adapter = new FacultyAwardedAdapter(getMyAssignmentList);
 
                                                                 recyclerView.setHasFixedSize(true);
@@ -141,9 +147,6 @@ public class remindersFragment extends Fragment {
 
                                                             }
                                                         });
-
-
-
 
 
                                             }

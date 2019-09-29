@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -38,23 +37,16 @@ public class FirstTimeInitialization extends AppCompatActivity {
                     onlyTextHere.setText(R.string.permissions_needed);
                     onlyImageView.setImageDrawable(null);
 
-                    if (ContextCompat.checkSelfPermission(FirstTimeInitialization.this,
-                            Manifest.permission.RECORD_AUDIO)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                            ActivityCompat.requestPermissions(FirstTimeInitialization.this,
-                                    new String[]{Manifest.permission.READ_CONTACTS},
+                    ActivityCompat.requestPermissions(FirstTimeInitialization.this,
+                                    new String[]{Manifest.permission.RECORD_AUDIO},
                                     1);
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Woohoo! "+R.string.permission_granted, Toast.LENGTH_LONG).show();
 
-                    }
 
                     count++;
                 } else if(count == 1) {
                     onlyImageView.setImageDrawable(null);
-                    String apple = R.string.getusedtoit + " :)";
+                    String apple = "Explore the app, find out stuff and get used to it " + " :)";
                     onlyTextHere.setText(apple);
                     count++;
                 } else if(count == 2) {
@@ -70,7 +62,19 @@ public class FirstTimeInitialization extends AppCompatActivity {
         skipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(FirstTimeInitialization.this, UserDashboard.class));
+
+                if (ContextCompat.checkSelfPermission(FirstTimeInitialization.this,
+                        Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(FirstTimeInitialization.this,
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            1);
+
+                } else {
+
+                    startActivity(new Intent(FirstTimeInitialization.this, UserDashboard.class));
+                }
             }
         });
 
