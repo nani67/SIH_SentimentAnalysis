@@ -166,7 +166,7 @@ class InstagramScrape(object):
     def get_top_search(self):
         return self.api.top_search()
 
-    def scrape(self, mental_illnesses):
+    def scrape_illnesses(self, mental_illnesses):
         instagram_results = {}
 
         for mental_illness in mental_illnesses:
@@ -203,7 +203,7 @@ class InstagramScrape(object):
 
             print(instagram_results[mental_illness])
 
-        return instagram_results
+        # return instagram_results
 # filename = 'instagram_' + mental_illness + '.json'
 # with open(filename, 'w', encoding='utf-8') as f:
 #     json.dump(instagram_results, f)

@@ -10,8 +10,6 @@ from bs4 import BeautifulSoup
 
 import numpy
 import nltk
-nltk.download('vader_lexicon')
-nltk.download('punkt')
 from sklearn.model_selection import train_test_split # function for splitting data to train and test sets
 
 from nltk import tokenize
@@ -64,6 +62,7 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 import urllib.request
+import numpy as np
 
 url = "https://www.cam.ac.uk/sites/www.cam.ac.uk/files/styles/content-885x432/public/news/research/news/depress.jpg?itok=ctfouPZ3"
 split_url = url.split('/')
@@ -72,10 +71,25 @@ path = r"C:\Users\kendrik\Pictures\Saved Pictures" + "\\" + img_name
 
 urllib.request.urlretrieve(url, path)
 
-im = Image.open(r"C:\Users\kendrik\Pictures\Saved Pictures\depress.jpg")
+im = np.array(Image.open(r"C:\Users\kendrik\Pictures\Saved Pictures\depress.jpg"))
 
-text = pytesseract.image_to_string(im, lang='eng')
+def process_img(im):
+    width = im.shape[1]
+    height = im.shape[0]
+    im = im.transpose(2,0,1).reshape(3,-1)
 
-print(type(text))
-print(len(text))
+    brg = np.amax(im,axis=0)
+    brg[brg==0] = 1
+    denom = np.sqrt((im[0]-im[1])**2-(im[0]-im[2])*(im[1]-im[2]))
+    denom[denom==0] = 1
+    hue = np.arccos(0.5*(2*im[0]-im[1]-im[2])/denom)
+    sat = (brg - np.amin(im,axis=0))/brg
 
+    return width, height, np.mean(brg), np.mean(sat), np.mean(hue)
+
+# text = pytesseract.image_to_string(im, lang='eng')
+
+# print(type(text))
+# print(len(text))
+result = process_img(im)
+print(result)

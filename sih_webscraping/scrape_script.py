@@ -146,9 +146,9 @@ def get_sentiment_percentage(sentiments):
     return results
 
 
-# print(get_sentiment_percentage(instagram_depression))
-# print(get_sentiment_percentage(twitter_depression))
-# print(get_sentiment_percentage(reddit_depression))
+print(get_sentiment_percentage(instagram_depression))
+print(get_sentiment_percentage(twitter_depression))
+print(get_sentiment_percentage(reddit_depression))
 
 # Instagram => Check caption, picture and extract both for processing
 # Twitter => Check twitter posts

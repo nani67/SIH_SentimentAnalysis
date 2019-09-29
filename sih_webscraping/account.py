@@ -48,6 +48,9 @@ doc_ref = ref.collection(u'web-data-obtaining').document()
 users_ref = ref.collection(u'web-data-obtaining')
 docs = users_ref.stream()
 
+risk_to_index = {'Low risk': 0, 'Medium risk': 1, 'High risk': 2}
+index_to_risk = {0: 'Low risk', 1: 'Medium risk', 2: 'High risk'}
+
 def read_json_file(filename):
     with open(filename) as json_file:
         data = json.load(json_file)
@@ -71,16 +74,12 @@ def clean_tweet(tweet):
     return ' '.join(re.sub("(@(\w+))|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|((http|https|ftp)://[a-zA-Z0-9\\./]+)|(#(\w+))"," ", tweet).split())
 
 def determine_risk(summarized_percentages):
-    if 0.10 <= summarized_percentages['negative'] <= 0.19:
+    if summarized_percentages['negative'] <= 0.19:
         return 'Low risk'
     elif 0.2 <= summarized_percentages['negative'] <= 0.34:
         return 'Medium risk'
-    elif 0.35 <= summarized_percentages['negative'] <= 0.49:
-        return 'High risk'
-    elif summarized_percentages['negative'] >= 0.5:
-        return 'Very high risk'
     else:
-        return 'No risk'
+        return 'High risk'
 
 def process_img(im):
     width = im.shape[1]
@@ -139,6 +138,8 @@ class Account(object):
         summary_media = {'negative': 0, 'not negative': 0}
         existing_text = []
         existing_media = []
+        text_risk = None
+        media_risk = None
 
         for post in extracted_json:
             text = post['text']
@@ -182,7 +183,7 @@ class Account(object):
 
                     im = np.array(img)
                     processing_result = process_img(im)
-                    if processing_result[2] <= 60 and processing_result[3] < 0.5:
+                    if processing_result[2] <= 55:
                         summary_media['negative'] = summary_media['negative'] + 1
                     else:
                         summary_media['not negative'] = summary_media['not negative'] + 1
@@ -196,24 +197,38 @@ class Account(object):
         for base in list(summary_media.keys()):
             img_total += summary_media[base]
 
-        for base in list(summary_text.keys()):
-            summary_text[base] = round(summary_text[base]/total, 2)
+        if total != 0:
+            for base in list(summary_text.keys()):
+                summary_text[base] = round(summary_text[base]/total, 2)
+            text_risk = determine_risk(summary_text)
 
-        for base in list(summary_media.keys()):
-            summary_media[base] = round(summary_media[base]/img_total, 2)
+        if img_total != 0:
+            for base in list(summary_media.keys()):
+                summary_media[base] = round(summary_media[base]/img_total, 2)
+            media_risk = determine_risk(summary_media)
 
-        text_risk = determine_risk(summary_text)
-        media_risk = determine_risk(summary_media)
+        if not text_risk and media_risk:
+            overall_risk = media_risk
+        elif not media_risk and text_risk:
+            overall_risk = text_risk
+        else:
+            risk_index = (risk_to_index[text_risk] + risk_to_index[media_risk])/2
+            overall_risk = index_to_risk[round(risk_index)]
 
-        doc_ref.set({u'instagram_username': self.instagram_username,
-                     u'filename': filename,
-                     u'extracted_instagram_content': extracted_json,
-                     u'existing_instagram_feeds': existing_text,
-                     u'existing_instagram_media': existing_media,
-                     u'existing_text_count': summary_text,
-                     u'existing_media_count': summary_media,
-                     u'text_risk': text_risk,
-                     u'media_risk': media_risk})
+        data = {u'instagram_username': self.instagram_username,
+                u'filename': filename,
+                u'extracted_instagram_content': extracted_json,
+                u'existing_instagram_feeds': existing_text,
+                u'existing_instagram_media': existing_media,
+                u'existing_text_count': summary_text,
+                u'existing_media_count': summary_media,
+                u'text_risk': text_risk,
+                u'media_risk': media_risk,
+                u'overall_risk': overall_risk}
+
+        doc_ref.set(data)
+        for key in list(data.keys()):
+            print(key, ':', data[key])
 
     def analyze_twitter_feed(self, filename):
         self.extract_from_twitter_offline()
@@ -222,6 +237,8 @@ class Account(object):
         summary_media = {'negative': 0, 'not_negative': 0}
         existing_text = []
         existing_media = []
+        text_risk = None
+        media_risk = None
 
         for post in extracted_json:
             text = post['text']
@@ -262,7 +279,7 @@ class Account(object):
 
                     im = np.array(img)
                     processing_result = process_img(im)
-                    if processing_result[2] <= 20 and processing_result[3] <= 2:
+                    if processing_result[2] <= 55:
                         summary_media['negative'] = summary_media['negative'] + 1
                     else:
                         summary_media['not_negative'] = summary_media['not_negative'] + 1
@@ -277,34 +294,50 @@ class Account(object):
         for base in list(summary_media.keys()):
             img_total += summary_media[base]
 
-        for base in list(summary_text.keys()):
-            summary_text[base] = round(summary_text[base]/total, 2)
+        if total != 0:
+            for base in list(summary_text.keys()):
+                summary_text[base] = round(summary_text[base]/total, 2)
+            text_risk = determine_risk(summary_text)
 
-        for base in list(summary_media.keys()):
-            summary_media[base] = round(summary_media[base]/img_total, 2)
+        if img_total != 0:
+            for base in list(summary_media.keys()):
+                summary_media[base] = round(summary_media[base]/img_total, 2)
+            media_risk = determine_risk(summary_media)
 
-        text_risk = determine_risk(summary_text)
-        media_risk = determine_risk(summary_media)
+        if not text_risk and media_risk:
+            overall_risk = media_risk
+        elif not media_risk and text_risk:
+            overall_risk = text_risk
+        else:
+            risk_index = (risk_to_index[text_risk] + risk_to_index[media_risk])/2
+            overall_risk = index_to_risk[round(risk_index)]
 
-        doc_ref.set({u'twitter_username': self.twitter_username,
-                     u'filename': filename,
-                     u'extracted_twitter_content': extracted_json,
-                     u'existing_twitter_texts': existing_text,
-                     u'existing_twitter_media': existing_media,
-                     u'existing_text_count': summary_text,
-                     u'existing_media_count': summary_media,
-                     u'text_risk': text_risk,
-                     u'media_risk': media_risk})
+        data = {u'twitter_username': self.twitter_username,
+                u'filename': filename,
+                u'extracted_twitter_content': extracted_json,
+                u'existing_twitter_texts': existing_text,
+                u'existing_twitter_media': existing_media,
+                u'existing_text_count': summary_text,
+                u'existing_media_count': summary_media,
+                u'text_risk': text_risk,
+                u'media_risk': media_risk,
+                u'overall_risk': overall_risk}
+
+        doc_ref.set(data)
+        for key in list(data.keys()):
+            print(key, ':', data[key])
 
 
 acc = Account()
-# acc.log_into_instagram("xxxxxx", "xxxxxxxx")
+# acc.log_into_instagram("xxxxxxxx", "xxxxxxxx")
 # acc.extract_from_instagram_offline()
 extracted_instagram = acc.analyze_instagram_feed("instagram_kendrikwah.json")
 
-# acc.log_into_twitter("depressingmsgs")
+print("\n")
+
+acc.log_into_twitter("depressingmsgs")
 # acc.extract_from_twitter_offline()
-# extracted_twitter = acc.analyze_twitter_feed('twitter_depressingmsgs.json')
+extracted_twitter = acc.analyze_twitter_feed('twitter_depressingmsgs.json')
 
 #
 #    Pipeline will work like this:

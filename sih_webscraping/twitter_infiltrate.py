@@ -1,3 +1,5 @@
+import re
+
 import twitter, json
 from twitter import TwitterError
 
@@ -44,7 +46,7 @@ class TwitterTarget(object):
 
         try:
             timeline = self.api.GetUserTimeline(screen_name=username,
-                                                count=10)
+                                                count=100)
         except TwitterError as te:
             return te
 
@@ -138,7 +140,7 @@ class TwitterTarget(object):
             json.dump(results, f)
 
 
-# test = TwitterTarget('neiltyson')
+# test = TwitterTarget('depressingmsgs')
 # print(test.get_own_feed())
 
 ###############################################################################################################
