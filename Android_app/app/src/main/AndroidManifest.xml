@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.stressbuster">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -15,8 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".FitbitActivity"></activity>
+        <activity android:name=".HistoryOfPaymentActivity" />
+        <activity android:name=".RedeemPoints" />
         <activity android:name=".UserDashboard" />
-
         <activity android:name=".FirstTimeInitialization" />
         <activity android:name=".LoginRegisterActivity" />
         <activity android:name=".MainActivity">
@@ -31,10 +29,12 @@
             android:name=".DataScraper"
             android:enabled="true"
             android:exported="true"
-            android:permission="TODO">
-
-        </service>
+            android:permission="TODO" />
     </application>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

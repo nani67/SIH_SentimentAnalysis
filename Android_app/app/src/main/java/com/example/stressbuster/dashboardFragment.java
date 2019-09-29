@@ -76,11 +76,13 @@ public class dashboardFragment extends Fragment implements remindersFragment.OnF
 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
         final TextView welcomeUser = view.findViewById(R.id.dashboard_welcomingUser);
-        Source source = Source.DEFAULT;
+
+        Source source = Source.CACHE;
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
                 .document("sampleDoesTheThing")
                 .get(source)
@@ -133,16 +135,15 @@ public class dashboardFragment extends Fragment implements remindersFragment.OnF
                         TreeMap<Integer, Integer> sorted = new TreeMap<>(mapStuffHappensHere);
                         Set<Map.Entry<Integer, Integer>> getSortedStuff = sorted.entrySet();
 
-                        int i = 0;
+                        int i = list.size()-7;
                         for(Map.Entry<Integer, Integer> tempOnes: getSortedStuff) {
-                            if(i < 7) {
+                            if(i <= list.size()) {
                                 values.add(new PointValue(i, tempOnes.getValue()));
                                 i++;
                             } else {
                                 break;
                             }
                         }
-
 
 
                         Log.d("Values in the graph", list.size()+"");
@@ -212,6 +213,7 @@ public class dashboardFragment extends Fragment implements remindersFragment.OnF
                 a.put("smileLevel", level+"");
 
                 String date = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+                Log.d("Date", date);
 
                 firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("SmileLevel")
                         .document(date)

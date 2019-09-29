@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,12 +30,17 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.util.List;
 import java.util.Objects;
 
 public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
@@ -93,6 +100,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
 
         userEmail.setText(firebaseUser.getEmail());
 
+        final Button button = contentView.findViewById(R.id.pointsRedeemButton);
+
         Source source = Source.DEFAULT;
         firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("personalInfo")
                 .document("sampleDoesTheThing")
@@ -109,6 +118,38 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d("Exception", e.toString());
+            }
+        });
+
+
+        firebaseFirestore.collection("UsersInfo").document(firebaseUser.getUid()).collection("userPoints")
+               .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                   @Override
+                   public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                       List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                       int points = 0;
+                       for(DocumentSnapshot apple: list) {
+                           points = points + Integer.parseInt(apple.get("UserPoints").toString());
+                       }
+                       button.setText(points+"");
+                   }
+               });
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), RedeemPoints.class));
+            }
+        });
+
+        button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                startActivity(new Intent(getContext(), HistoryOfPaymentActivity.class));
+
+                return false;
             }
         });
 
@@ -158,6 +199,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                                 editor.putString("FacebookUserID", userNameOfFacebookInfo.getText().toString());
                                 editor.putString("FacebookUserPassword", passwordForFacebookInfo.getText().toString());
                                 editor.apply();
+
+                                Snackbar.make(view, "User details stored securely", Snackbar.LENGTH_SHORT).show();
 
                             }
                         });
@@ -232,6 +275,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                                 editor.putString("InstagramUserID", userNameOfInstagramInfo.getText().toString());
                                 editor.putString("InstagramUserPassword", passwordForInstagramInfo.getText().toString());
                                 editor.apply();
+
+                                Snackbar.make(view, "User details stored securely", Snackbar.LENGTH_SHORT).show();
                             }
                         });
 
@@ -261,6 +306,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                                 editor.putString("TwitterUserID", userNameOfTwitterInfo.getText().toString());
                                 editor.putString("TwitterUserPassword", passwordForTwitterInfo.getText().toString());
                                 editor.apply();
+
+                                Snackbar.make(view, "User details stored securely", Snackbar.LENGTH_SHORT).show();
                             }
                         });
 
@@ -307,8 +354,8 @@ public class BottomSheetNavigationFragment extends BottomSheetDialogFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                editor.putString("TwitterUserID", userNameOfRedditInfo.getText().toString());
-                                editor.putString("TwitterUserPassword", passwordForRedditInfo.getText().toString());
+                                editor.putString("RedditUserID", userNameOfRedditInfo.getText().toString());
+                                editor.putString("RedditUserPassword", passwordForRedditInfo.getText().toString());
                                 editor.apply();
 
 

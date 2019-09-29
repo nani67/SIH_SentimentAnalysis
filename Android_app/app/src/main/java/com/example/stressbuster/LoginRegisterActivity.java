@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class LoginRegisterActivity extends AppCompatActivity {
 
@@ -67,14 +69,15 @@ public class LoginRegisterActivity extends AppCompatActivity {
         final com.google.android.material.textfield.TextInputEditText collRollNo = findViewById(R.id.CollRollNoText);
         final com.google.android.material.textfield.TextInputEditText passwordRegister = findViewById(R.id.passwordRegisterText);
 
-
         MaterialButton materialButton2 = findViewById(R.id.loginUser);
         materialButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String password = passwordObject.getText().toString();
-                String email = emailObject.getText().toString();
+                Snackbar.make(view, "Please wait while we log you in...", Snackbar.LENGTH_LONG).show();
+
+                String password = Objects.requireNonNull(passwordObject.getText()).toString();
+                String email = Objects.requireNonNull(emailObject.getText()).toString();
 
                 if(!(password.isEmpty() && email.isEmpty())) {
 
@@ -83,7 +86,6 @@ public class LoginRegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(AuthResult authResult) {
                                     startActivity(new Intent(LoginRegisterActivity.this, FirstTimeInitialization.class));
-
 
                                 }
                             });
